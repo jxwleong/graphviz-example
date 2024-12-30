@@ -1,0 +1,13 @@
+digraph two_blocks {
+  rankdir=LR;
+  node [shape=box, width=2, height=3, fixedsize=true];
+  //splines=ortho;
+  forcelabels=true;
+  
+  A [label="CPU 1"];
+  B [label="CPU 2"];
+  
+  A -> B [dir="both", label="Connection 1"];
+  A -> B [dir="both", label="Connection 2"];
+  A -> B [dir="both", label="Connection 3"];
+}
