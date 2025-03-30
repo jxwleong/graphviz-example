@@ -3,13 +3,26 @@ use Verilog::Getopt;
 use JSON;  # Import the JSON module
 
 # Setup options so files can be found
-my $opt = new Verilog::Getopt;
-$opt->parameter("+incdir+verilog", "-y", "verilog");
+#my $opt = {
+#    link_read_nonfatal => 1,  # Set to true to ignore missing modules instead of causing an error
+#    parameter => [
+#        "+incdir+verilog",  # Equivalent to -y verilog
+#        "-y", "verilog"     # Verilog directory to include
+#    ]
+#};
+my $opt = {
+    link_read_nonfatal => 1,  # Set to true to ignore missing modules instead of causing an error
+};
+
 
 # Prepare netlist
-my $nl = new Verilog::Netlist(options => $opt);
+my $nl = new Verilog::Netlist(
+   include_open_nonfatal => 1,
+   link_read_nonfatal    => 1,
+   keep_comments         => 1
+   );
 
-foreach my $file ('/home/jason/graphviz-example/verilog.v') {
+foreach my $file ('/home/jason/graphviz-example/cpu.v') {
     $nl->read_file(filename => $file);
 }
 
