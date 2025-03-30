@@ -16,12 +16,23 @@ sub symbol {
     my $token = shift;
     $self->{symbols}{$token}++;
 }
+
+sub keyword {
+    my $self = shift;
+    my $token = shift;
+    $self->{keywords}{$token}++;
+}
 sub report {
     my $self = shift;
     foreach my $sym (sort keys %{$self->{symbols}}) {
 printf "Symbol %-30s occurs %4d times\n",
 $sym, $self->{symbols}{$sym};
+
+    foreach my $sym (sort keys %{$self->{keywords}}) {
+printf "keyword %-30s occurs %4d times\n",
+$sym, $self->{keywords}{$sym};
     }
+}
 }
 
 package main;
