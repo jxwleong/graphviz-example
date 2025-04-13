@@ -1,6 +1,7 @@
 use Verilog::Netlist;
 use Verilog::Getopt;
 use JSON;  # Import the JSON module
+use File::Basename;
 
 # Setup options so files can be found
 #my $opt = {
@@ -22,9 +23,11 @@ my $nl = new Verilog::Netlist(
    keep_comments         => 1
    );
 
-foreach my $file ('/home/jason/graphviz-example/cpu.v') {
-    $nl->read_file(filename => $file);
-}
+my $file = '/home/jason/graphviz-example/cpu.v';
+$nl->read_file(filename => $file);
+my $filename = basename($file);
+my ($name, $ext) = split /\./, $filename;
+my $output_filename = $name . ".json";
 
 # Read in any sub-modules
 $nl->link();
@@ -50,7 +53,7 @@ foreach my $mod ($nl->top_modules_sorted) {
 }
 
 # Convert the structure to JSON and write it to a file
-open my $fh, '>', 'module_ports.json' or die "Cannot open file for writing: $!";
+open my $fh, '>', $output_filename or die "Cannot open file for writing: $!";
 print $fh to_json($modules_info, { pretty => 1 });
 close $fh;
 
