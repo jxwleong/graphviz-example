@@ -1,0 +1,40 @@
+{
+   "CPU" : [
+      {
+         "name" : "DataOrReg",
+         "direction" : "in"
+      },
+      {
+         "name" : "address",
+         "direction" : "in"
+      },
+      {
+         "direction" : "in",
+         "name" : "clk_i"
+      },
+      {
+         "direction" : "out",
+         "name" : "easter_egg"
+      },
+      {
+         "direction" : "in",
+         "name" : "instr_i"
+      },
+      {
+         "name" : "is_positive",
+         "direction" : "out"
+      },
+      {
+         "direction" : "in",
+         "name" : "reset"
+      },
+      {
+         "direction" : "out",
+         "name" : "value_o"
+      },
+      {
+         "name" : "vout_addr",
+         "direction" : "in"
+      }
+   ]
+}

@@ -1,0 +1,12 @@
+digraph {
+	rankdir=LR
+	module [label="{{ <in0>a | <in1>b | <in2>sel } | Mux2to1 | { <out0>y }}" fillcolor=lightgray shape=record style=filled]
+	in_0 [label=a fillcolor=lightblue shape=circle style=filled]
+	in_0 -> module:in0
+	in_1 [label=b fillcolor=lightblue shape=circle style=filled]
+	in_1 -> module:in1
+	in_2 [label=sel fillcolor=lightblue shape=circle style=filled]
+	in_2 -> module:in2
+	out_0 [label=y fillcolor=lightgreen shape=circle style=filled]
+	module:out0 -> out_0
+}

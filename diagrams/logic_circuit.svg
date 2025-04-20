@@ -1,0 +1,12 @@
+// Simple Logic Circuit
+digraph {
+	A [label="A (input)"]
+	B [label="B (input)"]
+	C [label=AND]
+	D [label=NOT]
+	E [label=OUT]
+	A -> C
+	B -> C
+	C -> D
+	D -> E
+}

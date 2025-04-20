@@ -47,6 +47,7 @@ output reg[7:0]        value_o;
 output  is_positive;
 output  reg[2:0] easter_egg;
 
+
 //------------------------- Wire&Reg -------------------------------//
 
 wire [3:0] vector_signed_bits;

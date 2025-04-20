@@ -1,0 +1,4 @@
+digraph {
+	rankdir=LR
+	module [label="{{ <in0>a | <in1>b | <in2>sel } | Mux2to1 | { <out0>y }}" fillcolor=lightgray shape=record style=filled]
+}
