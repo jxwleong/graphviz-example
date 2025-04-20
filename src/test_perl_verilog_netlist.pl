@@ -1,6 +1,7 @@
 use Verilog::Netlist;
 use Verilog::Getopt;
 use JSON;  # Import the JSON module
+use Tie::IxHash;    # To preserve key order in the hash
 use File::Basename;
 
 # Setup options so files can be found
@@ -23,7 +24,7 @@ my $nl = new Verilog::Netlist(
    keep_comments         => 1
    );
 
-my $file = '/home/jason/graphviz-example/cpu.v';
+my $file = '/home/jason/graphviz-example/examples/cpu.v';
 $nl->read_file(filename => $file);
 my $filename = basename($file);
 my ($name, $ext) = split /\./, $filename;
@@ -35,27 +36,55 @@ $nl->link();
 $nl->exit_if_error();
 
 # Create a structure to hold the module information
-my $modules_info = {};
 
 foreach my $mod ($nl->top_modules_sorted) {
     my $module_name = $mod->name;
-    $modules_info->{$module_name} = [];
 
-    foreach my $sig ($mod->ports_sorted) {
-        # Add port information (name and direction) to the module
-        push @{ $modules_info->{$module_name} }, {
-            name => $sig->name,
-            direction => $sig->direction
-        };
+    my @inputs;
+    my @outputs;
+
+    # https://metacpan.org/pod/Verilog::Netlist::Module#$self-%3Eports_ordered
+    # Different ordering of the ports, this ordering is for same as the verilog file
+    foreach my $sig ($mod->ports_ordered) {
+        my $dir = $sig->direction;
+        my $name = $sig->name;
+
+        if ($dir eq 'in') {
+            push @inputs, $name;
+        } elsif ($dir eq 'out') {
+            push @outputs, $name;
+        }
+        # You could also add `elsif ($dir eq 'inout')` if needed
     }
-   show_hier($mod, "  ", "", "");
+    my $modules_data =  {
+        module => $module_name,
+        input  => \@inputs,
+        output => \@outputs
+    };
+
+    # Tie a hash to preserve order
+    tie my %ordered_data, 'Tie::IxHash';
+
+    %ordered_data = (
+    module => $modules_data->{module},
+    input  => $modules_data->{input},
+    output => $modules_data->{output}
+);
+
+# Convert to JSON without sorting keys alphabetically
+my $json = JSON->new->pretty->encode(\%ordered_data);
+
+# Write JSON with enforced order
+    # Convert the structure to JSON and write it to a file
+    open my $fh, '>', $output_filename or die "Cannot open file for writing: $!";
+    print $fh $json;
+    close $fh;
+
+    show_hier($mod, "  ", "", "");
 
 }
 
-# Convert the structure to JSON and write it to a file
-open my $fh, '>', $output_filename or die "Cannot open file for writing: $!";
-print $fh to_json($modules_info, { pretty => 1 });
-close $fh;
+
 
 # Subroutine to display hierarchy (same as your original code)
 sub show_hier {
