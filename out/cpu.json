@@ -1,0 +1,16 @@
+{
+   "module" : "CPU",
+   "input" : [
+      "clk_i",
+      "DataOrReg",
+      "address[4:0]",
+      "instr_i[7:0]",
+      "reset",
+      "vout_addr[1:0]"
+   ],
+   "output" : [
+      "value_oreg [7:0]",
+      "is_positive",
+      "easter_eggreg [2:0]"
+   ]
+}

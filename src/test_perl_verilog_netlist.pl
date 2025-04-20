@@ -48,6 +48,12 @@ foreach my $mod ($nl->top_modules_sorted) {
     foreach my $sig ($mod->ports_ordered) {
         my $dir = $sig->direction;
         my $name = $sig->name;
+        my $data_type = $sig->data_type; # Basically it shows the width if declared
+        $sig->dump;
+
+        if ($data_type ne '') {
+            $name = join '', $name, $data_type;
+        }
 
         if ($dir eq 'in') {
             push @inputs, $name;
