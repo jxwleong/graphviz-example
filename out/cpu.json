@@ -3,14 +3,14 @@
    "input" : [
       "clk_i",
       "DataOrReg",
-      "address[4:0]",
-      "instr_i[7:0]",
+      "address",
+      "instr_i",
       "reset",
-      "vout_addr[1:0]"
+      "vout_addr"
    ],
    "output" : [
-      "value_oreg [7:0]",
+      "value_o",
       "is_positive",
-      "easter_eggreg [2:0]"
+      "easter_egg"
    ]
 }

@@ -51,9 +51,12 @@ foreach my $mod ($nl->top_modules_sorted) {
         my $data_type = $sig->data_type; # Basically it shows the width if declared
         $sig->dump;
 
-        if ($data_type ne '') {
-            $name = join '', $name, $data_type;
-        }
+        # If it started with [ end with ]
+        # For width
+        # In cases with input or output reg, it will be "reg [7:0]"
+        #if ($data_type =~ /^\[.*\]$/) {
+        #    $name = join '', $name, $data_type;
+        #}
 
         if ($dir eq 'in') {
             push @inputs, $name;
