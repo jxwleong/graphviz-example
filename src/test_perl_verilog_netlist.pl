@@ -12,19 +12,28 @@ use File::Basename;
 #        "-y", "verilog"     # Verilog directory to include
 #    ]
 #};
-my $opt = {
-    link_read_nonfatal => 1,  # Set to true to ignore missing modules instead of causing an error
-};
+#my $opt = {
+#    link_read_nonfatal => 1,  # Set to true to ignore missing modules instead of causing an error
+#    parameter => [
+#        "-y", "/home/jason/graphviz-example/examples/riscv_cpu_example"
+#    ]
+#};
 
+   my $opt = new Verilog::Getopt;
+   $opt->parameter( "+incdir+/home/jason/graphviz-example/examples/riscv_cpu_example",
+             "-y /home/jason/graphviz-example/examples/riscv_cpu_example",
+             );
 
+$Verilog::Netlist::Debug = 1;
 # Prepare netlist
 my $nl = new Verilog::Netlist(
-   include_open_nonfatal => 1,
-   link_read_nonfatal    => 1,
-   keep_comments         => 1
+   #include_open_nonfatal => 1,
+   #link_read_nonfatal    => 1,
+   keep_comments         => 1,
+   options  => $opt
    );
 
-my $file = '/home/jason/graphviz-example/examples/cpu.v';
+my $file = '/home/jason/graphviz-example/examples/riscv_cpu_example/CPU.v';
 $nl->read_file(filename => $file);
 my $filename = basename($file);
 my ($name, $ext) = split /\./, $filename;
@@ -37,6 +46,7 @@ $nl->exit_if_error();
 
 # Create a structure to hold the module information
 
+=comment
 foreach my $mod ($nl->top_modules_sorted) {
     my $module_name = $mod->name;
 
@@ -88,36 +98,69 @@ my $json = JSON->new->pretty->encode(\%ordered_data);
     open my $fh, '>', $output_filename or die "Cannot open file for writing: $!";
     print $fh $json;
     close $fh;
+=cut
 
-    show_hier($mod, "  ", "", "");
+my @modules_array;
 
-}
+foreach my $mod ($nl->modules_sorted_level) {
+    my $module_name = $mod->name;
 
-
-
-# Subroutine to display hierarchy (same as your original code)
-sub show_hier {
-    my $mod = shift;
-    my $indent = shift;
-    my $hier = shift;
-    my $cellname = shift;
-    
-    if (!$cellname) {
-        $hier = $mod->name;  # top modules get the design name
-    } else {
-        $hier .= ".$cellname";  # append the cellname
-    }
-
-    # You can also optionally print the module and its ports here if you like:
-    printf("%-45s %s\n", $indent."Module ".$mod->name);
-    foreach my $sig ($mod->ports_sorted) {
-        printf($indent."      %sput %s\n", $sig->direction, $sig->name);  # Optional
-    }
     foreach my $cell ($mod->cells_sorted) {
-        #printf($indent. "    Cell %s\n", $cell->name);  # Optional
+        my @inputs;
+        my @outputs;
+        my %cell_data;
+        my $inst_name = $cell->name;
+        my $submod    = $cell->submodname;  # The instantiated module type 
+        my $mod_name  = $cell->module->name;
+        print "Module: $mod_name\n";
+        print "  Instance: $inst_name ($submod)\n";
+
+        $cell_data{instance} = $inst_name;
+        $cell_data{instance_module} = $submod;
         foreach my $pin ($cell->pins_sorted) {
-            #printf($indent."     .%s(%s)\n", $pin->name, $pin->netname);  # Optional
+            my %pin_data;
+            
+            my $pin_name = $pin->name;        # Port name of submodule
+            my $net_name  = $pin->netname;     # The signal connected to it
+            my $port     = $pin->port;
+
+            my $port_name = $port->name;
+            my $pin_direction = $port->direction;
+            #print "    $pin_name ($pin_direction) => $net_name\n";
+
+            $pin_data{pin_name} = $pin_name;
+            #$pin_data{pin_direction} = $pin_direction;
+            $pin_data{pin_net} = $net_name;
+            while (my ($key, $value) = each %pin_data) {
+                print "$key: $value\n";
+            }
+
+            # \%pin_data the "\" is to keep the actual hash
+            # otherwise it will break the element down and become array instead
+            if ($pin_direction eq 'in') {
+                push @inputs,  \%pin_data;
+            } elsif ($pin_direction eq 'out') {
+                push @outputs, \%pin_data;
+            }
         }
-        show_hier($cell->submod, $indent."        ", $hier, $cell->name) if $cell->submod;
+        # Tie an ordered hash for clean output
+        tie my %ordered_data, 'Tie::IxHash';
+        %ordered_data = (
+            instance => $inst_name,
+            instance_module => $submod,
+            input  => \@inputs,
+            output => \@outputs
+        );
+
+        # Push the hashref into the array
+        push @modules_array, \%ordered_data;
+
     }
+
 }
+
+
+# Output to JSON
+open my $fh, '>', 'modules_all.json' or die $!;
+print $fh to_json(\@modules_array, { pretty => 1 });
+close $fh;

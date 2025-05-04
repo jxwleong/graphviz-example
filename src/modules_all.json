@@ -1,0 +1,1054 @@
+[
+   {
+      "instance" : "ALU",
+      "instance_module" : "ALU",
+      "input" : [
+         {
+            "pin_name" : "ALUCtrl_i",
+            "pin_net" : "ALU_Control_ALUCtrl_o"
+         },
+         {
+            "pin_net" : "ForwardToData1_data_o",
+            "pin_name" : "data1_i"
+         },
+         {
+            "pin_name" : "data2_i",
+            "pin_net" : "MUX_ALUSrc_data_o"
+         }
+      ],
+      "output" : [
+         {
+            "pin_net" : "ALU_Zero_o",
+            "pin_name" : "Zero_o"
+         },
+         {
+            "pin_name" : "data_o",
+            "pin_net" : "ALU_data_o"
+         }
+      ]
+   },
+   {
+      "instance" : "ALU_Control",
+      "instance_module" : "ALU_Control",
+      "input" : [
+         {
+            "pin_name" : "ALUOp_i",
+            "pin_net" : "ID_EX_ALUOp_o"
+         },
+         {
+            "pin_name" : "funct_i",
+            "pin_net" : "ALUfunct_in"
+         }
+      ],
+      "output" : [
+         {
+            "pin_net" : "ALU_Control_ALUCtrl_o",
+            "pin_name" : "ALUCtrl_o"
+         }
+      ]
+   },
+   {
+      "instance" : "AddSum",
+      "instance_module" : "ALU",
+      "input" : [
+         {
+            "pin_name" : "ALUCtrl_i",
+            "pin_net" : "3'b001"
+         },
+         {
+            "pin_net" : "IF_ID_pc_o",
+            "pin_name" : "data1_i"
+         },
+         {
+            "pin_name" : "data2_i",
+            "pin_net" : "shiftLeft_data_o"
+         }
+      ],
+      "output" : [
+         {
+            "pin_net" : "",
+            "pin_name" : "Zero_o"
+         },
+         {
+            "pin_net" : "AddSum_data_o",
+            "pin_name" : "data_o"
+         }
+      ]
+   },
+   {
+      "instance" : "Add_PC",
+      "instance_module" : "Adder",
+      "input" : [
+         {
+            "pin_name" : "data1_in",
+            "pin_net" : "inst_addr"
+         },
+         {
+            "pin_net" : "32'd4",
+            "pin_name" : "data2_in"
+         }
+      ],
+      "output" : [
+         {
+            "pin_name" : "data_o",
+            "pin_net" : "addPC"
+         }
+      ]
+   },
+   {
+      "instance" : "Control",
+      "instance_module" : "Control",
+      "input" : [
+         {
+            "pin_net" : "IF_ID_inst_o[6:0]",
+            "pin_name" : "Op_i"
+         }
+      ],
+      "output" : [
+         {
+            "pin_net" : "Control_ALUOp_o",
+            "pin_name" : "ALUOp_o"
+         },
+         {
+            "pin_net" : "Control_ALUSrc_o",
+            "pin_name" : "ALUSrc_o"
+         },
+         {
+            "pin_name" : "MemRd_o",
+            "pin_net" : "Control_MemRd_o"
+         },
+         {
+            "pin_name" : "MemToReg_o",
+            "pin_net" : "Control_MemToReg_o"
+         },
+         {
+            "pin_name" : "MemWr_o",
+            "pin_net" : "Control_MemWr_o"
+         },
+         {
+            "pin_net" : "Control_RegWrite_o",
+            "pin_name" : "RegWrite_o"
+         },
+         {
+            "pin_net" : "Control_immSelect_o",
+            "pin_name" : "immSelect_o"
+         }
+      ]
+   },
+   {
+      "instance" : "Data_Memory",
+      "instance_module" : "Data_Memory",
+      "input" : [
+         {
+            "pin_net" : "EX_MEM_MemRead_o",
+            "pin_name" : "MemRead_i"
+         },
+         {
+            "pin_net" : "EX_MEM_MemWrite_o",
+            "pin_name" : "MemWrite_i"
+         },
+         {
+            "pin_net" : "aluToDM_data_o",
+            "pin_name" : "addr_i"
+         },
+         {
+            "pin_net" : "clk_i",
+            "pin_name" : "clk_i"
+         },
+         {
+            "pin_net" : "EX_MEM_RDData_o",
+            "pin_name" : "data_i"
+         },
+         {
+            "pin_name" : "op_addr",
+            "pin_net" : "address"
+         },
+         {
+            "pin_name" : "reset",
+            "pin_net" : "rst"
+         }
+      ],
+      "output" : [
+         {
+            "pin_name" : "data_mem_o",
+            "pin_net" : "data_mem_o"
+         },
+         {
+            "pin_net" : "Data_Memory_data_o",
+            "pin_name" : "data_o"
+         }
+      ]
+   },
+   {
+      "instance" : "EX_MEM",
+      "instance_module" : "EX_MEM",
+      "input" : [
+         {
+            "pin_net" : "ALU_data_o",
+            "pin_name" : "ALUResult_i"
+         },
+         {
+            "pin_name" : "MemRead_i",
+            "pin_net" : "ID_EX_MemRead_o"
+         },
+         {
+            "pin_name" : "MemToReg_i",
+            "pin_net" : "ID_EX_MemToReg_o"
+         },
+         {
+            "pin_name" : "MemWrite_i",
+            "pin_net" : "ID_EX_MemWrite_o"
+         },
+         {
+            "pin_net" : "ForwardToData2_data_o",
+            "pin_name" : "RDData_i"
+         },
+         {
+            "pin_net" : "ID_EX_RegDst_o",
+            "pin_name" : "RDaddr_i"
+         },
+         {
+            "pin_name" : "RegWrite_i",
+            "pin_net" : "ID_EX_RegWrite_o"
+         },
+         {
+            "pin_name" : "VALUResult_i",
+            "pin_net" : "VALU_v_o"
+         },
+         {
+            "pin_net" : "clk_i",
+            "pin_name" : "clk_i"
+         },
+         {
+            "pin_net" : "ID_EX_inst_o",
+            "pin_name" : "instr_i"
+         },
+         {
+            "pin_name" : "pc_i",
+            "pin_net" : "ID_EX_pc_o"
+         },
+         {
+            "pin_net" : "start_i",
+            "pin_name" : "start_i"
+         },
+         {
+            "pin_name" : "zero_i",
+            "pin_net" : "ALU_Zero_o"
+         }
+      ],
+      "output" : [
+         {
+            "pin_net" : "EX_MEM_ALUResult_o",
+            "pin_name" : "ALUResult_o"
+         },
+         {
+            "pin_net" : "EX_MEM_MemRead_o",
+            "pin_name" : "MemRead_o"
+         },
+         {
+            "pin_name" : "MemToReg_o",
+            "pin_net" : "EX_MEM_MemToReg_o"
+         },
+         {
+            "pin_net" : "EX_MEM_MemWrite_o",
+            "pin_name" : "MemWrite_o"
+         },
+         {
+            "pin_net" : "EX_MEM_RDData_o",
+            "pin_name" : "RDData_o"
+         },
+         {
+            "pin_net" : "EX_MEM_RDaddr_o",
+            "pin_name" : "RDaddr_o"
+         },
+         {
+            "pin_net" : "EX_MEM_RegWrite_o",
+            "pin_name" : "RegWrite_o"
+         },
+         {
+            "pin_net" : "EX_MEM_VALUResult_o",
+            "pin_name" : "VALUResult_o"
+         },
+         {
+            "pin_name" : "instr_o",
+            "pin_net" : "EX_MEM_instr_o"
+         },
+         {
+            "pin_net" : "",
+            "pin_name" : "pc_o"
+         },
+         {
+            "pin_name" : "zero_o",
+            "pin_net" : ""
+         }
+      ]
+   },
+   {
+      "instance" : "ForwardToData1",
+      "instance_module" : "ForwardingMUX",
+      "input" : [
+         {
+            "pin_name" : "EX_MEM_i",
+            "pin_net" : "EX_MEM_ALUResult_o"
+         },
+         {
+            "pin_net" : "memToReg_data_o",
+            "pin_name" : "MEM_WB_i"
+         },
+         {
+            "pin_name" : "data_i",
+            "pin_net" : "ID_EX_RDData0_o"
+         },
+         {
+            "pin_net" : "ForwardingUnit_ForwardA_o",
+            "pin_name" : "select_i"
+         }
+      ],
+      "output" : [
+         {
+            "pin_net" : "ForwardToData1_data_o",
+            "pin_name" : "data_o"
+         }
+      ]
+   },
+   {
+      "instance" : "ForwardToData2",
+      "instance_module" : "ForwardingMUX",
+      "input" : [
+         {
+            "pin_net" : "EX_MEM_ALUResult_o",
+            "pin_name" : "EX_MEM_i"
+         },
+         {
+            "pin_net" : "memToReg_data_o",
+            "pin_name" : "MEM_WB_i"
+         },
+         {
+            "pin_name" : "data_i",
+            "pin_net" : "ID_EX_RDData1_o"
+         },
+         {
+            "pin_name" : "select_i",
+            "pin_net" : "ForwardingUnit_ForwardB_o"
+         }
+      ],
+      "output" : [
+         {
+            "pin_name" : "data_o",
+            "pin_net" : "ForwardToData2_data_o"
+         }
+      ]
+   },
+   {
+      "instance" : "ForwardingUnit",
+      "instance_module" : "ForwardingUnit",
+      "input" : [
+         {
+            "pin_name" : "EX_MEM_RD_i",
+            "pin_net" : "EX_MEM_RDaddr_o"
+         },
+         {
+            "pin_net" : "EX_MEM_RegWrite_o",
+            "pin_name" : "EX_MEM_RegWrite_i"
+         },
+         {
+            "pin_name" : "ID_EX_RS_i",
+            "pin_net" : "ID_EX_RSaddr_o"
+         },
+         {
+            "pin_net" : "ID_EX_RTaddr_o",
+            "pin_name" : "ID_EX_RT_i"
+         },
+         {
+            "pin_name" : "MEM_WB_RD_i",
+            "pin_net" : "MEM_WB_RDaddr_o"
+         },
+         {
+            "pin_net" : "MEM_WB_RegWrite_o",
+            "pin_name" : "MEM_WB_RegWrite_i"
+         }
+      ],
+      "output" : [
+         {
+            "pin_net" : "ForwardingUnit_ForwardA_o",
+            "pin_name" : "ForwardA_o"
+         },
+         {
+            "pin_net" : "ForwardingUnit_ForwardB_o",
+            "pin_name" : "ForwardB_o"
+         }
+      ]
+   },
+   {
+      "instance" : "HazradDetect",
+      "instance_module" : "HazradDetect",
+      "input" : [
+         {
+            "pin_name" : "ID_EX_MemRead_i",
+            "pin_net" : "ID_EX_MemRead_o"
+         },
+         {
+            "pin_name" : "ID_EXrd_i",
+            "pin_net" : "IF_ID_inst_o[19:15]"
+         },
+         {
+            "pin_net" : "IF_ID_inst_o[24:20]",
+            "pin_name" : "IF_IDrs1_i"
+         },
+         {
+            "pin_name" : "IF_IDrs2_i",
+            "pin_net" : "IF_ID_inst_o[19:15]"
+         }
+      ],
+      "output" : [
+         {
+            "pin_name" : "Hazard_o",
+            "pin_net" : "HazradDetect_Hazard_o"
+         }
+      ]
+   },
+   {
+      "instance" : "ID_EX",
+      "instance_module" : "ID_EX",
+      "input" : [
+         {
+            "pin_name" : "ALUOp_i",
+            "pin_net" : "MUX_Control_ALUOp_o"
+         },
+         {
+            "pin_net" : "MUX_Control_ALUSrc_o",
+            "pin_name" : "ALUSrc_i"
+         },
+         {
+            "pin_net" : "MUX_Control_MemRead_o",
+            "pin_name" : "MemRead_i"
+         },
+         {
+            "pin_name" : "MemToReg_i",
+            "pin_net" : "MUX_Control_MemToReg_o"
+         },
+         {
+            "pin_net" : "MUX_Control_MemWrite_o",
+            "pin_name" : "MemWrite_i"
+         },
+         {
+            "pin_net" : "PC_Branch_Select",
+            "pin_name" : "PC_branch_select_i"
+         },
+         {
+            "pin_name" : "RDData0_i",
+            "pin_net" : "Registers_RSdata_o"
+         },
+         {
+            "pin_name" : "RDData1_i",
+            "pin_net" : "Registers_RTdata_o"
+         },
+         {
+            "pin_net" : "IF_ID_inst_o[19:15]",
+            "pin_name" : "RSaddr_i"
+         },
+         {
+            "pin_net" : "IF_ID_inst_o[24:20]",
+            "pin_name" : "RTaddr_i"
+         },
+         {
+            "pin_net" : "MUX_Control_RegDst_o",
+            "pin_name" : "RegDst_i"
+         },
+         {
+            "pin_name" : "RegWrite_i",
+            "pin_net" : "MUX_Control_RegWrite_o"
+         },
+         {
+            "pin_net" : "Sign_Extend_data_o",
+            "pin_name" : "SignExtended_i"
+         },
+         {
+            "pin_net" : "clk_i",
+            "pin_name" : "clk_i"
+         },
+         {
+            "pin_name" : "inst_i",
+            "pin_net" : "IF_ID_inst_o"
+         },
+         {
+            "pin_net" : "PCImmExtend_data_o",
+            "pin_name" : "pcEx_i"
+         },
+         {
+            "pin_net" : "IF_ID_pc_o",
+            "pin_name" : "pc_i"
+         },
+         {
+            "pin_name" : "start_i",
+            "pin_net" : "start_i"
+         }
+      ],
+      "output" : [
+         {
+            "pin_net" : "ID_EX_ALUOp_o",
+            "pin_name" : "ALUOp_o"
+         },
+         {
+            "pin_net" : "ID_EX_ALUSrc_o",
+            "pin_name" : "ALUSrc_o"
+         },
+         {
+            "pin_net" : "ID_EX_MemRead_o",
+            "pin_name" : "MemRead_o"
+         },
+         {
+            "pin_name" : "MemToReg_o",
+            "pin_net" : "ID_EX_MemToReg_o"
+         },
+         {
+            "pin_net" : "ID_EX_MemWrite_o",
+            "pin_name" : "MemWrite_o"
+         },
+         {
+            "pin_net" : "",
+            "pin_name" : "PC_branch_select_o"
+         },
+         {
+            "pin_name" : "RDData0_o",
+            "pin_net" : "ID_EX_RDData0_o"
+         },
+         {
+            "pin_net" : "ID_EX_RDData1_o",
+            "pin_name" : "RDData1_o"
+         },
+         {
+            "pin_net" : "ID_EX_RSaddr_o",
+            "pin_name" : "RSaddr_o"
+         },
+         {
+            "pin_net" : "ID_EX_RTaddr_o",
+            "pin_name" : "RTaddr_o"
+         },
+         {
+            "pin_name" : "RegDst_o",
+            "pin_net" : "ID_EX_RegDst_o"
+         },
+         {
+            "pin_name" : "RegWrite_o",
+            "pin_net" : "ID_EX_RegWrite_o"
+         },
+         {
+            "pin_net" : "ID_EX_SignExtended_o",
+            "pin_name" : "SignExtended_o"
+         },
+         {
+            "pin_name" : "inst_o",
+            "pin_net" : "ID_EX_inst_o"
+         },
+         {
+            "pin_net" : "",
+            "pin_name" : "pcEx_o"
+         },
+         {
+            "pin_net" : "ID_EX_pc_o",
+            "pin_name" : "pc_o"
+         }
+      ]
+   },
+   {
+      "instance" : "IF_ID",
+      "instance_module" : "IF_ID",
+      "input" : [
+         {
+            "pin_net" : "clk_i",
+            "pin_name" : "clk_i"
+         },
+         {
+            "pin_net" : "PC_Branch_Select",
+            "pin_name" : "flush_i"
+         },
+         {
+            "pin_name" : "hazard_i",
+            "pin_net" : "HazradDetect_Hazard_o"
+         },
+         {
+            "pin_net" : "inst",
+            "pin_name" : "inst_i"
+         },
+         {
+            "pin_name" : "pcIm_i",
+            "pin_net" : "pcIm"
+         },
+         {
+            "pin_name" : "pc_i",
+            "pin_net" : "inst_addr"
+         },
+         {
+            "pin_net" : "start_i",
+            "pin_name" : "start_i"
+         }
+      ],
+      "output" : [
+         {
+            "pin_net" : "IF_ID_inst_o",
+            "pin_name" : "inst_o"
+         },
+         {
+            "pin_name" : "pcIm_o",
+            "pin_net" : "IF_ID_pcIm_o"
+         },
+         {
+            "pin_name" : "pc_o",
+            "pin_net" : "IF_ID_pc_o"
+         }
+      ]
+   },
+   {
+      "instance" : "Instruction_Memory",
+      "instance_module" : "Instruction_Memory",
+      "input" : [
+         {
+            "pin_name" : "addr_i",
+            "pin_net" : "inst_addr"
+         },
+         {
+            "pin_net" : "clk_i",
+            "pin_name" : "clk"
+         },
+         {
+            "pin_net" : "instr_i",
+            "pin_name" : "instr_i"
+         },
+         {
+            "pin_net" : "rst",
+            "pin_name" : "reset"
+         }
+      ],
+      "output" : [
+         {
+            "pin_net" : "inst",
+            "pin_name" : "instr_o"
+         }
+      ]
+   },
+   {
+      "instance" : "MEM_WB",
+      "instance_module" : "MEM_WB",
+      "input" : [
+         {
+            "pin_name" : "ALUResult_i",
+            "pin_net" : "aluToDM_data_o"
+         },
+         {
+            "pin_name" : "DataMemReadData_i",
+            "pin_net" : "Data_Memory_data_o"
+         },
+         {
+            "pin_net" : "EX_MEM_MemToReg_o",
+            "pin_name" : "MemToReg_i"
+         },
+         {
+            "pin_net" : "EX_MEM_RDData_o",
+            "pin_name" : "RDData_i"
+         },
+         {
+            "pin_name" : "RDaddr_i",
+            "pin_net" : "EX_MEM_RDaddr_o"
+         },
+         {
+            "pin_net" : "EX_MEM_RegWrite_o",
+            "pin_name" : "RegWrite_i"
+         },
+         {
+            "pin_net" : "clk_i",
+            "pin_name" : "clk_i"
+         },
+         {
+            "pin_net" : "start_i",
+            "pin_name" : "start_i"
+         }
+      ],
+      "output" : [
+         {
+            "pin_name" : "ALUResult_o",
+            "pin_net" : "MEM_WB_ALUResult_o"
+         },
+         {
+            "pin_name" : "DataMemReadData_o",
+            "pin_net" : "MEM_WB_DataMemReadData_o"
+         },
+         {
+            "pin_net" : "MEM_WB_MemToReg_o",
+            "pin_name" : "MemToReg_o"
+         },
+         {
+            "pin_net" : "",
+            "pin_name" : "RDData_o"
+         },
+         {
+            "pin_name" : "RDaddr_o",
+            "pin_net" : "MEM_WB_RDaddr_o"
+         },
+         {
+            "pin_net" : "MEM_WB_RegWrite_o",
+            "pin_name" : "RegWrite_o"
+         }
+      ]
+   },
+   {
+      "instance" : "MUX_ALUSrc",
+      "instance_module" : "MUX32",
+      "input" : [
+         {
+            "pin_name" : "data1_i",
+            "pin_net" : "ForwardToData2_data_o"
+         },
+         {
+            "pin_net" : "ID_EX_SignExtended_o",
+            "pin_name" : "data2_i"
+         },
+         {
+            "pin_net" : "ID_EX_ALUSrc_o",
+            "pin_name" : "select_i"
+         }
+      ],
+      "output" : [
+         {
+            "pin_net" : "MUX_ALUSrc_data_o",
+            "pin_name" : "data_o"
+         }
+      ]
+   },
+   {
+      "instance" : "MUX_Control",
+      "instance_module" : "MUX_Control",
+      "input" : [
+         {
+            "pin_net" : "Control_ALUOp_o",
+            "pin_name" : "ALUOp_i"
+         },
+         {
+            "pin_name" : "ALUSrc_i",
+            "pin_net" : "Control_ALUSrc_o"
+         },
+         {
+            "pin_net" : "HazradDetect_Hazard_o",
+            "pin_name" : "Hazard_i"
+         },
+         {
+            "pin_net" : "Control_MemRd_o",
+            "pin_name" : "MemRead_i"
+         },
+         {
+            "pin_net" : "Control_MemToReg_o",
+            "pin_name" : "MemToReg_i"
+         },
+         {
+            "pin_net" : "Control_MemWr_o",
+            "pin_name" : "MemWrite_i"
+         },
+         {
+            "pin_net" : "IF_ID_inst_o[11:7]",
+            "pin_name" : "RegDst_i"
+         },
+         {
+            "pin_name" : "RegWrite_i",
+            "pin_net" : "Control_RegWrite_o"
+         }
+      ],
+      "output" : [
+         {
+            "pin_name" : "ALUOp_o",
+            "pin_net" : "MUX_Control_ALUOp_o"
+         },
+         {
+            "pin_net" : "MUX_Control_ALUSrc_o",
+            "pin_name" : "ALUSrc_o"
+         },
+         {
+            "pin_name" : "MemRead_o",
+            "pin_net" : "MUX_Control_MemRead_o"
+         },
+         {
+            "pin_net" : "MUX_Control_MemToReg_o",
+            "pin_name" : "MemToReg_o"
+         },
+         {
+            "pin_net" : "MUX_Control_MemWrite_o",
+            "pin_name" : "MemWrite_o"
+         },
+         {
+            "pin_net" : "MUX_Control_RegDst_o",
+            "pin_name" : "RegDst_o"
+         },
+         {
+            "pin_name" : "RegWrite_o",
+            "pin_net" : "MUX_Control_RegWrite_o"
+         }
+      ]
+   },
+   {
+      "instance" : "PC",
+      "instance_module" : "PC",
+      "input" : [
+         {
+            "pin_net" : "clk_i",
+            "pin_name" : "clk_i"
+         },
+         {
+            "pin_net" : "HazradDetect_Hazard_o",
+            "pin_name" : "hazardpc_i"
+         },
+         {
+            "pin_net" : "pcSelect_data_o",
+            "pin_name" : "pc_i"
+         },
+         {
+            "pin_name" : "start_i",
+            "pin_net" : "start_i"
+         }
+      ],
+      "output" : [
+         {
+            "pin_name" : "pc_o",
+            "pin_net" : "inst_addr"
+         }
+      ]
+   },
+   {
+      "instance" : "PCImmExtend",
+      "instance_module" : "Sign_Extend",
+      "input" : [
+         {
+            "pin_net" : "IF_ID_pcIm_o",
+            "pin_name" : "data0_i"
+         },
+         {
+            "pin_net" : "12'b0",
+            "pin_name" : "data1_i"
+         },
+         {
+            "pin_net" : "1'b0",
+            "pin_name" : "select_i"
+         }
+      ],
+      "output" : [
+         {
+            "pin_name" : "data_o",
+            "pin_net" : "PCImmExtend_data_o"
+         }
+      ]
+   },
+   {
+      "instance" : "Registers",
+      "instance_module" : "Registers",
+      "input" : [
+         {
+            "pin_net" : "MEM_WB_RDaddr_o",
+            "pin_name" : "RDaddr_i"
+         },
+         {
+            "pin_name" : "RDdata_i",
+            "pin_net" : "memToReg_data_o"
+         },
+         {
+            "pin_name" : "RSaddr_i",
+            "pin_net" : "IF_ID_inst_o[19:15]"
+         },
+         {
+            "pin_name" : "RTaddr_i",
+            "pin_net" : "IF_ID_inst_o[24:20]"
+         },
+         {
+            "pin_net" : "MEM_WB_RegWrite_o",
+            "pin_name" : "RegWrite_i"
+         },
+         {
+            "pin_net" : "clk_i",
+            "pin_name" : "clk_i"
+         },
+         {
+            "pin_name" : "is_pos_i",
+            "pin_net" : "vector_signed[1]"
+         },
+         {
+            "pin_net" : "address",
+            "pin_name" : "op_address"
+         },
+         {
+            "pin_name" : "reset",
+            "pin_net" : "rst"
+         }
+      ],
+      "output" : [
+         {
+            "pin_name" : "RSdata_o",
+            "pin_net" : "Registers_RSdata_o"
+         },
+         {
+            "pin_net" : "Registers_RTdata_o",
+            "pin_name" : "RTdata_o"
+         },
+         {
+            "pin_name" : "pos_o",
+            "pin_net" : "is_positive_line"
+         },
+         {
+            "pin_net" : "reg_o",
+            "pin_name" : "reg_o"
+         }
+      ]
+   },
+   {
+      "instance" : "Sign_Extend",
+      "instance_module" : "Sign_Extend",
+      "input" : [
+         {
+            "pin_net" : "IF_ID_inst_o[31:20]",
+            "pin_name" : "data0_i"
+         },
+         {
+            "pin_net" : "{IF_ID_inst_o[31:25],IF_ID_inst_o[11:7]}",
+            "pin_name" : "data1_i"
+         },
+         {
+            "pin_net" : "Control_immSelect_o",
+            "pin_name" : "select_i"
+         }
+      ],
+      "output" : [
+         {
+            "pin_name" : "data_o",
+            "pin_net" : "Sign_Extend_data_o"
+         }
+      ]
+   },
+   {
+      "instance" : "VALU",
+      "instance_module" : "VALU",
+      "input" : [
+         {
+            "pin_net" : "VALU_Control_VALUCtrl_o",
+            "pin_name" : "VALUCtrl_i"
+         },
+         {
+            "pin_net" : "ForwardToData1_data_o",
+            "pin_name" : "v1_i"
+         },
+         {
+            "pin_name" : "v2_i",
+            "pin_net" : "MUX_ALUSrc_data_o"
+         }
+      ],
+      "output" : [
+         {
+            "pin_net" : "vector_signed_bits",
+            "pin_name" : "over"
+         },
+         {
+            "pin_net" : "VALU_v_o",
+            "pin_name" : "v_o"
+         }
+      ]
+   },
+   {
+      "instance" : "VALU_Control",
+      "instance_module" : "VALU_ctrl",
+      "input" : [
+         {
+            "pin_name" : "vfunct_i",
+            "pin_net" : "ALUfunct_in"
+         }
+      ],
+      "output" : [
+         {
+            "pin_net" : "VALU_Control_VALUCtrl_o",
+            "pin_name" : "VALUCtrl_o"
+         }
+      ]
+   },
+   {
+      "instance" : "aluToDM",
+      "instance_module" : "MUX32",
+      "input" : [
+         {
+            "pin_net" : "EX_MEM_ALUResult_o",
+            "pin_name" : "data1_i"
+         },
+         {
+            "pin_name" : "data2_i",
+            "pin_net" : "EX_MEM_VALUResult_o"
+         },
+         {
+            "pin_net" : "toDataMemory",
+            "pin_name" : "select_i"
+         }
+      ],
+      "output" : [
+         {
+            "pin_name" : "data_o",
+            "pin_net" : "aluToDM_data_o"
+         }
+      ]
+   },
+   {
+      "instance" : "memToReg",
+      "instance_module" : "MUX32",
+      "input" : [
+         {
+            "pin_net" : "MEM_WB_ALUResult_o",
+            "pin_name" : "data1_i"
+         },
+         {
+            "pin_name" : "data2_i",
+            "pin_net" : "MEM_WB_DataMemReadData_o"
+         },
+         {
+            "pin_net" : "MEM_WB_MemToReg_o",
+            "pin_name" : "select_i"
+         }
+      ],
+      "output" : [
+         {
+            "pin_net" : "memToReg_data_o",
+            "pin_name" : "data_o"
+         }
+      ]
+   },
+   {
+      "instance" : "pcSelect",
+      "instance_module" : "MUX32",
+      "input" : [
+         {
+            "pin_name" : "data1_i",
+            "pin_net" : "addPC"
+         },
+         {
+            "pin_name" : "data2_i",
+            "pin_net" : "AddSum_data_o"
+         },
+         {
+            "pin_name" : "select_i",
+            "pin_net" : "isBranch"
+         }
+      ],
+      "output" : [
+         {
+            "pin_name" : "data_o",
+            "pin_net" : "pcSelect_data_o"
+         }
+      ]
+   },
+   {
+      "instance" : "shiftLeft",
+      "instance_module" : "Shift1",
+      "input" : [
+         {
+            "pin_name" : "data_i",
+            "pin_net" : "PCImmExtend_data_o"
+         }
+      ],
+      "output" : [
+         {
+            "pin_name" : "data_o",
+            "pin_net" : "shiftLeft_data_o"
+         }
+      ]
+   }
+]
