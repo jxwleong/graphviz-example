@@ -202,17 +202,13 @@ for my $inst (@modules_array) {
 
                     # Remove the data width in the name of input and output net
                     # for compare
-                    my $input_net_clean = $input_net =~ s/\[\d+:\d+\]//;
-                    my $output_net_clean = $output_net =~ s/\[\d+:\d+\]//;
+                    (my $input_net_clean = $input_net) =~ s/\[\d+:\d+\]//;
+                    (my $output_net_clean = $output_net) =~ s/\[\d+:\d+\]//;
                     if ($input_net_clean eq $output_net_clean) {
                         my %pin_connection;
                         # Need to use "->" because the $input_pin is just a reference
                         $input_pin->{"connection"} = $connection_ref;
-                        my $temp = join "" , $inst_name, ".", $input_net;
-                        #print "$temp is connected to output $connection_ref\n"
-                    }
-
-                   
+                    }               
             }
         }
     } 

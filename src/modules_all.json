@@ -4,29 +4,29 @@
       "instance_module" : "ALU",
       "input" : [
          {
-            "net" : "ALU_Control_ALUCtrl_o",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "ALUCtrl_i"
+            "connection" : "ALU_Control.ALU_Control_ALUCtrl_o",
+            "pin" : "ALUCtrl_i",
+            "net" : "ALU_Control_ALUCtrl_o"
          },
          {
+            "pin" : "data1_i",
             "net" : "ForwardToData1_data_o",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "data1_i"
+            "connection" : "ForwardToData1.ForwardToData1_data_o"
          },
          {
-            "pin" : "data2_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "net" : "MUX_ALUSrc_data_o"
+            "connection" : "MUX_ALUSrc.MUX_ALUSrc_data_o",
+            "net" : "MUX_ALUSrc_data_o",
+            "pin" : "data2_i"
          }
       ],
       "output" : [
          {
-            "net" : "ALU_Zero_o",
-            "pin" : "Zero_o"
+            "pin" : "Zero_o",
+            "net" : "ALU_Zero_o"
          },
          {
-            "pin" : "data_o",
-            "net" : "ALU_data_o"
+            "net" : "ALU_data_o",
+            "pin" : "data_o"
          }
       ]
    },
@@ -36,12 +36,11 @@
       "input" : [
          {
             "net" : "ID_EX_ALUOp_o",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "ALUOp_i"
+            "pin" : "ALUOp_i",
+            "connection" : "ID_EX.ID_EX_ALUOp_o"
          },
          {
             "net" : "ALUfunct_in",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
             "pin" : "funct_i"
          }
       ],
@@ -58,18 +57,17 @@
       "input" : [
          {
             "pin" : "ALUCtrl_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
             "net" : "3'b001"
          },
          {
+            "connection" : "IF_ID.IF_ID_pc_o",
             "pin" : "data1_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
             "net" : "IF_ID_pc_o"
          },
          {
             "pin" : "data2_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "net" : "shiftLeft_data_o"
+            "net" : "shiftLeft_data_o",
+            "connection" : "shiftLeft.shiftLeft_data_o"
          }
       ],
       "output" : [
@@ -88,20 +86,19 @@
       "instance_module" : "Adder",
       "input" : [
          {
+            "connection" : "PC.inst_addr",
             "pin" : "data1_in",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
             "net" : "inst_addr"
          },
          {
-            "net" : "32'd4",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "data2_in"
+            "pin" : "data2_in",
+            "net" : "32'd4"
          }
       ],
       "output" : [
          {
-            "net" : "addPC",
-            "pin" : "data_o"
+            "pin" : "data_o",
+            "net" : "addPC"
          }
       ]
    },
@@ -110,19 +107,19 @@
       "instance_module" : "Control",
       "input" : [
          {
-            "pin" : "Op_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "net" : "IF_ID_inst_o[6:0]"
+            "connection" : "IF_ID.IF_ID_inst_o",
+            "net" : "IF_ID_inst_o[6:0]",
+            "pin" : "Op_i"
          }
       ],
       "output" : [
          {
-            "pin" : "ALUOp_o",
-            "net" : "Control_ALUOp_o"
+            "net" : "Control_ALUOp_o",
+            "pin" : "ALUOp_o"
          },
          {
-            "pin" : "ALUSrc_o",
-            "net" : "Control_ALUSrc_o"
+            "net" : "Control_ALUSrc_o",
+            "pin" : "ALUSrc_o"
          },
          {
             "pin" : "MemRd_o",
@@ -133,8 +130,8 @@
             "pin" : "MemToReg_o"
          },
          {
-            "pin" : "MemWr_o",
-            "net" : "Control_MemWr_o"
+            "net" : "Control_MemWr_o",
+            "pin" : "MemWr_o"
          },
          {
             "pin" : "RegWrite_o",
@@ -152,38 +149,35 @@
       "input" : [
          {
             "net" : "EX_MEM_MemRead_o",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "MemRead_i"
+            "pin" : "MemRead_i",
+            "connection" : "EX_MEM.EX_MEM_MemRead_o"
          },
          {
+            "connection" : "EX_MEM.EX_MEM_MemWrite_o",
             "pin" : "MemWrite_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
             "net" : "EX_MEM_MemWrite_o"
          },
          {
             "net" : "aluToDM_data_o",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "addr_i"
+            "pin" : "addr_i",
+            "connection" : "aluToDM.aluToDM_data_o"
          },
          {
             "pin" : "clk_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
             "net" : "clk_i"
          },
          {
+            "net" : "EX_MEM_RDData_o",
             "pin" : "data_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "net" : "EX_MEM_RDData_o"
+            "connection" : "EX_MEM.EX_MEM_RDData_o"
          },
          {
-            "net" : "address",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "op_addr"
+            "pin" : "op_addr",
+            "net" : "address"
          },
          {
-            "net" : "rst",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "reset"
+            "pin" : "reset",
+            "net" : "rst"
          }
       ],
       "output" : [
@@ -192,8 +186,8 @@
             "pin" : "data_mem_o"
          },
          {
-            "net" : "Data_Memory_data_o",
-            "pin" : "data_o"
+            "pin" : "data_o",
+            "net" : "Data_Memory_data_o"
          }
       ]
    },
@@ -202,69 +196,67 @@
       "instance_module" : "EX_MEM",
       "input" : [
          {
-            "pin" : "ALUResult_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "net" : "ALU_data_o"
+            "connection" : "ALU.ALU_data_o",
+            "net" : "ALU_data_o",
+            "pin" : "ALUResult_i"
          },
          {
-            "pin" : "MemRead_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "net" : "ID_EX_MemRead_o"
+            "connection" : "ID_EX.ID_EX_MemRead_o",
+            "net" : "ID_EX_MemRead_o",
+            "pin" : "MemRead_i"
          },
          {
+            "connection" : "ID_EX.ID_EX_MemToReg_o",
             "net" : "ID_EX_MemToReg_o",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
             "pin" : "MemToReg_i"
          },
          {
-            "pin" : "MemWrite_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "net" : "ID_EX_MemWrite_o"
+            "connection" : "ID_EX.ID_EX_MemWrite_o",
+            "net" : "ID_EX_MemWrite_o",
+            "pin" : "MemWrite_i"
          },
          {
-            "net" : "ForwardToData2_data_o",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "RDData_i"
+            "connection" : "ForwardToData2.ForwardToData2_data_o",
+            "pin" : "RDData_i",
+            "net" : "ForwardToData2_data_o"
          },
          {
+            "net" : "ID_EX_RegDst_o",
             "pin" : "RDaddr_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "net" : "ID_EX_RegDst_o"
+            "connection" : "ID_EX.ID_EX_RegDst_o"
          },
          {
             "net" : "ID_EX_RegWrite_o",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "RegWrite_i"
+            "pin" : "RegWrite_i",
+            "connection" : "ID_EX.ID_EX_RegWrite_o"
          },
          {
-            "net" : "VALU_v_o",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "VALUResult_i"
+            "connection" : "VALU.VALU_v_o",
+            "pin" : "VALUResult_i",
+            "net" : "VALU_v_o"
          },
          {
             "net" : "clk_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
             "pin" : "clk_i"
          },
          {
+            "pin" : "instr_i",
             "net" : "ID_EX_inst_o",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "instr_i"
+            "connection" : "ID_EX.ID_EX_inst_o"
          },
          {
+            "connection" : "ID_EX.ID_EX_pc_o",
             "pin" : "pc_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
             "net" : "ID_EX_pc_o"
          },
          {
-            "pin" : "start_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "net" : "start_i"
+            "net" : "start_i",
+            "pin" : "start_i"
          },
          {
-            "net" : "ALU_Zero_o",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "zero_i"
+            "connection" : "ALU.ALU_Zero_o",
+            "pin" : "zero_i",
+            "net" : "ALU_Zero_o"
          }
       ],
       "output" : [
@@ -273,8 +265,8 @@
             "net" : "EX_MEM_ALUResult_o"
          },
          {
-            "pin" : "MemRead_o",
-            "net" : "EX_MEM_MemRead_o"
+            "net" : "EX_MEM_MemRead_o",
+            "pin" : "MemRead_o"
          },
          {
             "net" : "EX_MEM_MemToReg_o",
@@ -285,8 +277,8 @@
             "pin" : "MemWrite_o"
          },
          {
-            "pin" : "RDData_o",
-            "net" : "EX_MEM_RDData_o"
+            "net" : "EX_MEM_RDData_o",
+            "pin" : "RDData_o"
          },
          {
             "net" : "EX_MEM_RDaddr_o",
@@ -301,8 +293,8 @@
             "pin" : "VALUResult_o"
          },
          {
-            "pin" : "instr_o",
-            "net" : "EX_MEM_instr_o"
+            "net" : "EX_MEM_instr_o",
+            "pin" : "instr_o"
          },
          {
             "net" : "",
@@ -319,24 +311,24 @@
       "instance_module" : "ForwardingMUX",
       "input" : [
          {
-            "net" : "EX_MEM_ALUResult_o",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "EX_MEM_i"
+            "connection" : "EX_MEM.EX_MEM_ALUResult_o",
+            "pin" : "EX_MEM_i",
+            "net" : "EX_MEM_ALUResult_o"
          },
          {
-            "net" : "memToReg_data_o",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "MEM_WB_i"
+            "connection" : "memToReg.memToReg_data_o",
+            "pin" : "MEM_WB_i",
+            "net" : "memToReg_data_o"
          },
          {
+            "connection" : "ID_EX.ID_EX_RDData0_o",
             "net" : "ID_EX_RDData0_o",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
             "pin" : "data_i"
          },
          {
             "pin" : "select_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "net" : "ForwardingUnit_ForwardA_o"
+            "net" : "ForwardingUnit_ForwardA_o",
+            "connection" : "ForwardingUnit.ForwardingUnit_ForwardA_o"
          }
       ],
       "output" : [
@@ -352,23 +344,23 @@
       "input" : [
          {
             "net" : "EX_MEM_ALUResult_o",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "EX_MEM_i"
+            "pin" : "EX_MEM_i",
+            "connection" : "EX_MEM.EX_MEM_ALUResult_o"
          },
          {
+            "pin" : "MEM_WB_i",
             "net" : "memToReg_data_o",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "MEM_WB_i"
+            "connection" : "memToReg.memToReg_data_o"
          },
          {
+            "net" : "ID_EX_RDData1_o",
             "pin" : "data_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "net" : "ID_EX_RDData1_o"
+            "connection" : "ID_EX.ID_EX_RDData1_o"
          },
          {
+            "net" : "ForwardingUnit_ForwardB_o",
             "pin" : "select_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "net" : "ForwardingUnit_ForwardB_o"
+            "connection" : "ForwardingUnit.ForwardingUnit_ForwardB_o"
          }
       ],
       "output" : [
@@ -383,33 +375,33 @@
       "instance_module" : "ForwardingUnit",
       "input" : [
          {
-            "pin" : "EX_MEM_RD_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "net" : "EX_MEM_RDaddr_o"
+            "connection" : "EX_MEM.EX_MEM_RDaddr_o",
+            "net" : "EX_MEM_RDaddr_o",
+            "pin" : "EX_MEM_RD_i"
          },
          {
-            "pin" : "EX_MEM_RegWrite_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "net" : "EX_MEM_RegWrite_o"
+            "connection" : "EX_MEM.EX_MEM_RegWrite_o",
+            "net" : "EX_MEM_RegWrite_o",
+            "pin" : "EX_MEM_RegWrite_i"
          },
          {
+            "connection" : "ID_EX.ID_EX_RSaddr_o",
             "net" : "ID_EX_RSaddr_o",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
             "pin" : "ID_EX_RS_i"
          },
          {
+            "connection" : "ID_EX.ID_EX_RTaddr_o",
             "pin" : "ID_EX_RT_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
             "net" : "ID_EX_RTaddr_o"
          },
          {
+            "pin" : "MEM_WB_RD_i",
             "net" : "MEM_WB_RDaddr_o",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "MEM_WB_RD_i"
+            "connection" : "MEM_WB.MEM_WB_RDaddr_o"
          },
          {
-            "pin" : "MEM_WB_RegWrite_i",
             "connection" : "MEM_WB.MEM_WB_RegWrite_o",
+            "pin" : "MEM_WB_RegWrite_i",
             "net" : "MEM_WB_RegWrite_o"
          }
       ],
@@ -429,30 +421,30 @@
       "instance_module" : "HazradDetect",
       "input" : [
          {
-            "net" : "ID_EX_MemRead_o",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "ID_EX_MemRead_i"
+            "connection" : "ID_EX.ID_EX_MemRead_o",
+            "pin" : "ID_EX_MemRead_i",
+            "net" : "ID_EX_MemRead_o"
          },
          {
+            "connection" : "IF_ID.IF_ID_inst_o",
             "pin" : "ID_EXrd_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
             "net" : "IF_ID_inst_o[19:15]"
          },
          {
-            "pin" : "IF_IDrs1_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "net" : "IF_ID_inst_o[24:20]"
+            "connection" : "IF_ID.IF_ID_inst_o",
+            "net" : "IF_ID_inst_o[24:20]",
+            "pin" : "IF_IDrs1_i"
          },
          {
             "net" : "IF_ID_inst_o[19:15]",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "IF_IDrs2_i"
+            "pin" : "IF_IDrs2_i",
+            "connection" : "IF_ID.IF_ID_inst_o"
          }
       ],
       "output" : [
          {
-            "net" : "HazradDetect_Hazard_o",
-            "pin" : "Hazard_o"
+            "pin" : "Hazard_o",
+            "net" : "HazradDetect_Hazard_o"
          }
       ]
    },
@@ -461,93 +453,90 @@
       "instance_module" : "ID_EX",
       "input" : [
          {
-            "net" : "MUX_Control_ALUOp_o",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "ALUOp_i"
+            "connection" : "MUX_Control.MUX_Control_ALUOp_o",
+            "pin" : "ALUOp_i",
+            "net" : "MUX_Control_ALUOp_o"
          },
          {
+            "net" : "MUX_Control_ALUSrc_o",
             "pin" : "ALUSrc_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "net" : "MUX_Control_ALUSrc_o"
+            "connection" : "MUX_Control.MUX_Control_ALUSrc_o"
          },
          {
             "pin" : "MemRead_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "net" : "MUX_Control_MemRead_o"
+            "net" : "MUX_Control_MemRead_o",
+            "connection" : "MUX_Control.MUX_Control_MemRead_o"
          },
          {
             "net" : "MUX_Control_MemToReg_o",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "MemToReg_i"
+            "pin" : "MemToReg_i",
+            "connection" : "MUX_Control.MUX_Control_MemToReg_o"
          },
          {
             "pin" : "MemWrite_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "net" : "MUX_Control_MemWrite_o"
+            "net" : "MUX_Control_MemWrite_o",
+            "connection" : "MUX_Control.MUX_Control_MemWrite_o"
          },
          {
-            "net" : "PC_Branch_Select",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "PC_branch_select_i"
+            "pin" : "PC_branch_select_i",
+            "net" : "PC_Branch_Select"
          },
          {
+            "net" : "Registers_RSdata_o",
             "pin" : "RDData0_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "net" : "Registers_RSdata_o"
+            "connection" : "Registers.Registers_RSdata_o"
          },
          {
             "net" : "Registers_RTdata_o",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "RDData1_i"
+            "pin" : "RDData1_i",
+            "connection" : "Registers.Registers_RTdata_o"
          },
          {
-            "net" : "IF_ID_inst_o[19:15]",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "RSaddr_i"
+            "connection" : "IF_ID.IF_ID_inst_o",
+            "pin" : "RSaddr_i",
+            "net" : "IF_ID_inst_o[19:15]"
          },
          {
             "net" : "IF_ID_inst_o[24:20]",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "RTaddr_i"
+            "pin" : "RTaddr_i",
+            "connection" : "IF_ID.IF_ID_inst_o"
          },
          {
+            "pin" : "RegDst_i",
             "net" : "MUX_Control_RegDst_o",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "RegDst_i"
+            "connection" : "MUX_Control.MUX_Control_RegDst_o"
          },
          {
             "pin" : "RegWrite_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "net" : "MUX_Control_RegWrite_o"
+            "net" : "MUX_Control_RegWrite_o",
+            "connection" : "MUX_Control.MUX_Control_RegWrite_o"
          },
          {
-            "pin" : "SignExtended_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "net" : "Sign_Extend_data_o"
+            "connection" : "Sign_Extend.Sign_Extend_data_o",
+            "net" : "Sign_Extend_data_o",
+            "pin" : "SignExtended_i"
          },
          {
-            "net" : "clk_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "clk_i"
+            "pin" : "clk_i",
+            "net" : "clk_i"
          },
          {
+            "pin" : "inst_i",
             "net" : "IF_ID_inst_o",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "inst_i"
+            "connection" : "IF_ID.IF_ID_inst_o"
          },
          {
+            "pin" : "pcEx_i",
             "net" : "PCImmExtend_data_o",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "pcEx_i"
+            "connection" : "PCImmExtend.PCImmExtend_data_o"
          },
          {
-            "net" : "IF_ID_pc_o",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "pc_i"
+            "connection" : "IF_ID.IF_ID_pc_o",
+            "pin" : "pc_i",
+            "net" : "IF_ID_pc_o"
          },
          {
             "pin" : "start_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
             "net" : "start_i"
          }
       ],
@@ -561,16 +550,16 @@
             "net" : "ID_EX_ALUSrc_o"
          },
          {
-            "pin" : "MemRead_o",
-            "net" : "ID_EX_MemRead_o"
+            "net" : "ID_EX_MemRead_o",
+            "pin" : "MemRead_o"
          },
          {
-            "pin" : "MemToReg_o",
-            "net" : "ID_EX_MemToReg_o"
+            "net" : "ID_EX_MemToReg_o",
+            "pin" : "MemToReg_o"
          },
          {
-            "net" : "ID_EX_MemWrite_o",
-            "pin" : "MemWrite_o"
+            "pin" : "MemWrite_o",
+            "net" : "ID_EX_MemWrite_o"
          },
          {
             "net" : "",
@@ -581,8 +570,8 @@
             "pin" : "RDData0_o"
          },
          {
-            "pin" : "RDData1_o",
-            "net" : "ID_EX_RDData1_o"
+            "net" : "ID_EX_RDData1_o",
+            "pin" : "RDData1_o"
          },
          {
             "pin" : "RSaddr_o",
@@ -593,12 +582,12 @@
             "net" : "ID_EX_RTaddr_o"
          },
          {
-            "net" : "ID_EX_RegDst_o",
-            "pin" : "RegDst_o"
+            "pin" : "RegDst_o",
+            "net" : "ID_EX_RegDst_o"
          },
          {
-            "net" : "ID_EX_RegWrite_o",
-            "pin" : "RegWrite_o"
+            "pin" : "RegWrite_o",
+            "net" : "ID_EX_RegWrite_o"
          },
          {
             "pin" : "SignExtended_o",
@@ -609,8 +598,8 @@
             "pin" : "inst_o"
          },
          {
-            "pin" : "pcEx_o",
-            "net" : ""
+            "net" : "",
+            "pin" : "pcEx_o"
          },
          {
             "pin" : "pc_o",
@@ -623,49 +612,45 @@
       "instance_module" : "IF_ID",
       "input" : [
          {
-            "net" : "clk_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "clk_i"
+            "pin" : "clk_i",
+            "net" : "clk_i"
          },
          {
-            "net" : "PC_Branch_Select",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "flush_i"
+            "pin" : "flush_i",
+            "net" : "PC_Branch_Select"
          },
          {
+            "connection" : "HazradDetect.HazradDetect_Hazard_o",
             "pin" : "hazard_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
             "net" : "HazradDetect_Hazard_o"
          },
          {
+            "connection" : "Instruction_Memory.inst",
             "pin" : "inst_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
             "net" : "inst"
          },
          {
-            "pin" : "pcIm_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "net" : "pcIm"
+            "net" : "pcIm",
+            "pin" : "pcIm_i"
          },
          {
+            "connection" : "PC.inst_addr",
             "pin" : "pc_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
             "net" : "inst_addr"
          },
          {
-            "net" : "start_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "start_i"
+            "pin" : "start_i",
+            "net" : "start_i"
          }
       ],
       "output" : [
          {
-            "net" : "IF_ID_inst_o",
-            "pin" : "inst_o"
+            "pin" : "inst_o",
+            "net" : "IF_ID_inst_o"
          },
          {
-            "net" : "IF_ID_pcIm_o",
-            "pin" : "pcIm_o"
+            "pin" : "pcIm_o",
+            "net" : "IF_ID_pcIm_o"
          },
          {
             "pin" : "pc_o",
@@ -678,24 +663,21 @@
       "instance_module" : "Instruction_Memory",
       "input" : [
          {
+            "connection" : "PC.inst_addr",
             "pin" : "addr_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
             "net" : "inst_addr"
          },
          {
             "net" : "clk_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
             "pin" : "clk"
          },
          {
-            "pin" : "instr_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "net" : "instr_i"
+            "net" : "instr_i",
+            "pin" : "instr_i"
          },
          {
-            "net" : "rst",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "reset"
+            "pin" : "reset",
+            "net" : "rst"
          }
       ],
       "output" : [
@@ -710,54 +692,52 @@
       "instance_module" : "MEM_WB",
       "input" : [
          {
-            "pin" : "ALUResult_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "net" : "aluToDM_data_o"
+            "connection" : "aluToDM.aluToDM_data_o",
+            "net" : "aluToDM_data_o",
+            "pin" : "ALUResult_i"
          },
          {
+            "net" : "Data_Memory_data_o",
             "pin" : "DataMemReadData_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "net" : "Data_Memory_data_o"
+            "connection" : "Data_Memory.Data_Memory_data_o"
          },
          {
+            "connection" : "EX_MEM.EX_MEM_MemToReg_o",
             "net" : "EX_MEM_MemToReg_o",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
             "pin" : "MemToReg_i"
          },
          {
+            "connection" : "EX_MEM.EX_MEM_RDData_o",
             "net" : "EX_MEM_RDData_o",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
             "pin" : "RDData_i"
          },
          {
+            "connection" : "EX_MEM.EX_MEM_RDaddr_o",
             "pin" : "RDaddr_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
             "net" : "EX_MEM_RDaddr_o"
          },
          {
             "pin" : "RegWrite_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "net" : "EX_MEM_RegWrite_o"
+            "net" : "EX_MEM_RegWrite_o",
+            "connection" : "EX_MEM.EX_MEM_RegWrite_o"
          },
          {
             "net" : "clk_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
             "pin" : "clk_i"
          },
          {
-            "pin" : "start_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "net" : "start_i"
+            "net" : "start_i",
+            "pin" : "start_i"
          }
       ],
       "output" : [
          {
-            "pin" : "ALUResult_o",
-            "net" : "MEM_WB_ALUResult_o"
+            "net" : "MEM_WB_ALUResult_o",
+            "pin" : "ALUResult_o"
          },
          {
-            "net" : "MEM_WB_DataMemReadData_o",
-            "pin" : "DataMemReadData_o"
+            "pin" : "DataMemReadData_o",
+            "net" : "MEM_WB_DataMemReadData_o"
          },
          {
             "net" : "MEM_WB_MemToReg_o",
@@ -772,8 +752,8 @@
             "net" : "MEM_WB_RDaddr_o"
          },
          {
-            "pin" : "RegWrite_o",
-            "net" : "MEM_WB_RegWrite_o"
+            "net" : "MEM_WB_RegWrite_o",
+            "pin" : "RegWrite_o"
          }
       ]
    },
@@ -782,19 +762,19 @@
       "instance_module" : "MUX32",
       "input" : [
          {
+            "connection" : "ForwardToData2.ForwardToData2_data_o",
             "net" : "ForwardToData2_data_o",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
             "pin" : "data1_i"
          },
          {
+            "net" : "ID_EX_SignExtended_o",
             "pin" : "data2_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "net" : "ID_EX_SignExtended_o"
+            "connection" : "ID_EX.ID_EX_SignExtended_o"
          },
          {
-            "net" : "ID_EX_ALUSrc_o",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "select_i"
+            "connection" : "ID_EX.ID_EX_ALUSrc_o",
+            "pin" : "select_i",
+            "net" : "ID_EX_ALUSrc_o"
          }
       ],
       "output" : [
@@ -809,74 +789,74 @@
       "instance_module" : "MUX_Control",
       "input" : [
          {
+            "pin" : "ALUOp_i",
             "net" : "Control_ALUOp_o",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "ALUOp_i"
+            "connection" : "Control.Control_ALUOp_o"
          },
          {
-            "net" : "Control_ALUSrc_o",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "ALUSrc_i"
+            "connection" : "Control.Control_ALUSrc_o",
+            "pin" : "ALUSrc_i",
+            "net" : "Control_ALUSrc_o"
          },
          {
+            "connection" : "HazradDetect.HazradDetect_Hazard_o",
             "net" : "HazradDetect_Hazard_o",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
             "pin" : "Hazard_i"
          },
          {
+            "net" : "Control_MemRd_o",
             "pin" : "MemRead_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "net" : "Control_MemRd_o"
+            "connection" : "Control.Control_MemRd_o"
          },
          {
+            "connection" : "Control.Control_MemToReg_o",
             "pin" : "MemToReg_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
             "net" : "Control_MemToReg_o"
          },
          {
             "net" : "Control_MemWr_o",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "MemWrite_i"
+            "pin" : "MemWrite_i",
+            "connection" : "Control.Control_MemWr_o"
          },
          {
             "net" : "IF_ID_inst_o[11:7]",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "RegDst_i"
+            "pin" : "RegDst_i",
+            "connection" : "IF_ID.IF_ID_inst_o"
          },
          {
+            "connection" : "Control.Control_RegWrite_o",
             "net" : "Control_RegWrite_o",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
             "pin" : "RegWrite_i"
          }
       ],
       "output" : [
          {
-            "net" : "MUX_Control_ALUOp_o",
-            "pin" : "ALUOp_o"
+            "pin" : "ALUOp_o",
+            "net" : "MUX_Control_ALUOp_o"
          },
          {
             "net" : "MUX_Control_ALUSrc_o",
             "pin" : "ALUSrc_o"
          },
          {
-            "pin" : "MemRead_o",
-            "net" : "MUX_Control_MemRead_o"
+            "net" : "MUX_Control_MemRead_o",
+            "pin" : "MemRead_o"
          },
          {
-            "pin" : "MemToReg_o",
-            "net" : "MUX_Control_MemToReg_o"
+            "net" : "MUX_Control_MemToReg_o",
+            "pin" : "MemToReg_o"
          },
          {
-            "pin" : "MemWrite_o",
-            "net" : "MUX_Control_MemWrite_o"
+            "net" : "MUX_Control_MemWrite_o",
+            "pin" : "MemWrite_o"
          },
          {
             "pin" : "RegDst_o",
             "net" : "MUX_Control_RegDst_o"
          },
          {
-            "pin" : "RegWrite_o",
-            "net" : "MUX_Control_RegWrite_o"
+            "net" : "MUX_Control_RegWrite_o",
+            "pin" : "RegWrite_o"
          }
       ]
    },
@@ -885,23 +865,21 @@
       "instance_module" : "PC",
       "input" : [
          {
-            "net" : "clk_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "clk_i"
+            "pin" : "clk_i",
+            "net" : "clk_i"
          },
          {
-            "pin" : "hazardpc_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "net" : "HazradDetect_Hazard_o"
+            "connection" : "HazradDetect.HazradDetect_Hazard_o",
+            "net" : "HazradDetect_Hazard_o",
+            "pin" : "hazardpc_i"
          },
          {
+            "connection" : "pcSelect.pcSelect_data_o",
             "net" : "pcSelect_data_o",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
             "pin" : "pc_i"
          },
          {
             "net" : "start_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
             "pin" : "start_i"
          }
       ],
@@ -917,19 +895,17 @@
       "instance_module" : "Sign_Extend",
       "input" : [
          {
-            "pin" : "data0_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "net" : "IF_ID_pcIm_o"
+            "connection" : "IF_ID.IF_ID_pcIm_o",
+            "net" : "IF_ID_pcIm_o",
+            "pin" : "data0_i"
          },
          {
             "pin" : "data1_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
             "net" : "12'b0"
          },
          {
-            "pin" : "select_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "net" : "1'b0"
+            "net" : "1'b0",
+            "pin" : "select_i"
          }
       ],
       "output" : [
@@ -944,55 +920,51 @@
       "instance_module" : "Registers",
       "input" : [
          {
+            "connection" : "MEM_WB.MEM_WB_RDaddr_o",
             "pin" : "RDaddr_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
             "net" : "MEM_WB_RDaddr_o"
          },
          {
             "net" : "memToReg_data_o",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "RDdata_i"
+            "pin" : "RDdata_i",
+            "connection" : "memToReg.memToReg_data_o"
          },
          {
+            "net" : "IF_ID_inst_o[19:15]",
             "pin" : "RSaddr_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "net" : "IF_ID_inst_o[19:15]"
+            "connection" : "IF_ID.IF_ID_inst_o"
          },
          {
-            "net" : "IF_ID_inst_o[24:20]",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "RTaddr_i"
+            "connection" : "IF_ID.IF_ID_inst_o",
+            "pin" : "RTaddr_i",
+            "net" : "IF_ID_inst_o[24:20]"
          },
          {
             "pin" : "RegWrite_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "net" : "MEM_WB_RegWrite_o"
+            "net" : "MEM_WB_RegWrite_o",
+            "connection" : "MEM_WB.MEM_WB_RegWrite_o"
          },
          {
-            "net" : "clk_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "clk_i"
+            "pin" : "clk_i",
+            "net" : "clk_i"
          },
          {
-            "pin" : "is_pos_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "net" : "vector_signed[1]"
+            "net" : "vector_signed[1]",
+            "pin" : "is_pos_i"
          },
          {
-            "pin" : "op_address",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "net" : "address"
+            "net" : "address",
+            "pin" : "op_address"
          },
          {
             "net" : "rst",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
             "pin" : "reset"
          }
       ],
       "output" : [
          {
-            "pin" : "RSdata_o",
-            "net" : "Registers_RSdata_o"
+            "net" : "Registers_RSdata_o",
+            "pin" : "RSdata_o"
          },
          {
             "net" : "Registers_RTdata_o",
@@ -1003,8 +975,8 @@
             "pin" : "pos_o"
          },
          {
-            "net" : "reg_o",
-            "pin" : "reg_o"
+            "pin" : "reg_o",
+            "net" : "reg_o"
          }
       ]
    },
@@ -1013,18 +985,17 @@
       "instance_module" : "Sign_Extend",
       "input" : [
          {
-            "net" : "IF_ID_inst_o[31:20]",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "data0_i"
+            "connection" : "IF_ID.IF_ID_inst_o",
+            "pin" : "data0_i",
+            "net" : "IF_ID_inst_o[31:20]"
          },
          {
-            "pin" : "data1_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "net" : "{IF_ID_inst_o[31:25],IF_ID_inst_o[11:7]}"
+            "net" : "{IF_ID_inst_o[31:25],IF_ID_inst_o[11:7]}",
+            "pin" : "data1_i"
          },
          {
+            "connection" : "Control.Control_immSelect_o",
             "pin" : "select_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
             "net" : "Control_immSelect_o"
          }
       ],
@@ -1040,18 +1011,18 @@
       "instance_module" : "VALU",
       "input" : [
          {
-            "net" : "VALU_Control_VALUCtrl_o",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "VALUCtrl_i"
+            "connection" : "VALU_Control.VALU_Control_VALUCtrl_o",
+            "pin" : "VALUCtrl_i",
+            "net" : "VALU_Control_VALUCtrl_o"
          },
          {
+            "connection" : "ForwardToData1.ForwardToData1_data_o",
             "pin" : "v1_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
             "net" : "ForwardToData1_data_o"
          },
          {
+            "connection" : "MUX_ALUSrc.MUX_ALUSrc_data_o",
             "net" : "MUX_ALUSrc_data_o",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
             "pin" : "v2_i"
          }
       ],
@@ -1061,8 +1032,8 @@
             "net" : "vector_signed_bits"
          },
          {
-            "pin" : "v_o",
-            "net" : "VALU_v_o"
+            "net" : "VALU_v_o",
+            "pin" : "v_o"
          }
       ]
    },
@@ -1071,9 +1042,8 @@
       "instance_module" : "VALU_ctrl",
       "input" : [
          {
-            "pin" : "vfunct_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "net" : "ALUfunct_in"
+            "net" : "ALUfunct_in",
+            "pin" : "vfunct_i"
          }
       ],
       "output" : [
@@ -1088,18 +1058,17 @@
       "instance_module" : "MUX32",
       "input" : [
          {
+            "pin" : "data1_i",
             "net" : "EX_MEM_ALUResult_o",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "data1_i"
+            "connection" : "EX_MEM.EX_MEM_ALUResult_o"
          },
          {
             "net" : "EX_MEM_VALUResult_o",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "data2_i"
+            "pin" : "data2_i",
+            "connection" : "EX_MEM.EX_MEM_VALUResult_o"
          },
          {
             "net" : "toDataMemory",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
             "pin" : "select_i"
          }
       ],
@@ -1115,19 +1084,19 @@
       "instance_module" : "MUX32",
       "input" : [
          {
+            "pin" : "data1_i",
             "net" : "MEM_WB_ALUResult_o",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "data1_i"
+            "connection" : "MEM_WB.MEM_WB_ALUResult_o"
          },
          {
+            "net" : "MEM_WB_DataMemReadData_o",
             "pin" : "data2_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "net" : "MEM_WB_DataMemReadData_o"
+            "connection" : "MEM_WB.MEM_WB_DataMemReadData_o"
          },
          {
+            "net" : "MEM_WB_MemToReg_o",
             "pin" : "select_i",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "net" : "MEM_WB_MemToReg_o"
+            "connection" : "MEM_WB.MEM_WB_MemToReg_o"
          }
       ],
       "output" : [
@@ -1142,25 +1111,24 @@
       "instance_module" : "MUX32",
       "input" : [
          {
+            "connection" : "Add_PC.addPC",
             "net" : "addPC",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
             "pin" : "data1_i"
          },
          {
+            "connection" : "AddSum.AddSum_data_o",
             "net" : "AddSum_data_o",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
             "pin" : "data2_i"
          },
          {
-            "net" : "isBranch",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
-            "pin" : "select_i"
+            "pin" : "select_i",
+            "net" : "isBranch"
          }
       ],
       "output" : [
          {
-            "net" : "pcSelect_data_o",
-            "pin" : "data_o"
+            "pin" : "data_o",
+            "net" : "pcSelect_data_o"
          }
       ]
    },
@@ -1169,8 +1137,8 @@
       "instance_module" : "Shift1",
       "input" : [
          {
+            "connection" : "PCImmExtend.PCImmExtend_data_o",
             "net" : "PCImmExtend_data_o",
-            "connection" : "MEM_WB.MEM_WB_RegWrite_o",
             "pin" : "data_i"
          }
       ],
