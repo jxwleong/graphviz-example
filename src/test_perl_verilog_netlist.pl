@@ -170,17 +170,23 @@ foreach my $mod ($nl->modules_sorted_level) {
 my %inst_output_pins_net;
 
 for my $inst (@modules_array) {
+
+    my @mapped_output_pins;
+    my $inst_name = $inst->{"instance"};
+
     for my $output_pin (@{ $inst->{"output"} }) {
         my $net = $output_pin->{"net"};
-        my $inst_name = $inst->{"instance"};
-        $inst_output_pins_net{$inst_name} = {
+       
+        push @mapped_output_pins, {
             net => $net,
             pin => $output_pin->{"pin"},
             ref => join "" , $inst_name, ".", $net
         };
     }
+    $inst_output_pins_net{$inst_name} = \@mapped_output_pins;
+    
 }
-
+#print Dumper(%inst_output_pins_net);
 
 # Second step - Create the "connection" between different pins of respective instances
 for my $inst (@modules_array) {
@@ -190,19 +196,29 @@ for my $inst (@modules_array) {
         
         # Looping through the output mapping
         for my $mapped_inst (keys %inst_output_pins_net) {
-            my $output_net = $inst_output_pins_net{$mapped_inst}->{"net"};
-            my $connection_ref = $inst_output_pins_net{$mapped_inst}->{"ref"};
-            if ($input_net eq $output_net) {
-                my %pin_connection;
-                $pin_connection{"connection"} = $connection_ref;
-                my $temp = join "" , $inst_name, ".", $input_net;
-                print "$temp is connected to output $connection_ref\n"
+            for my $output_pin (@{ $inst_output_pins_net{$mapped_inst} }) {
+                    my $output_net = $output_pin->{"net"};
+                    my $connection_ref = $output_pin->{"ref"};
+
+                    # Remove the data width in the name of input and output net
+                    # for compare
+                    my $input_net_clean = $input_net =~ s/\[\d+:\d+\]//;
+                    my $output_net_clean = $output_net =~ s/\[\d+:\d+\]//;
+                    if ($input_net_clean eq $output_net_clean) {
+                        my %pin_connection;
+                        # Need to use "->" because the $input_pin is just a reference
+                        $input_pin->{"connection"} = $connection_ref;
+                        my $temp = join "" , $inst_name, ".", $input_net;
+                        #print "$temp is connected to output $connection_ref\n"
+                    }
+
+                   
             }
         }
     } 
 }
 
-#print Dumper(%inst_output_pins_net);
+print Dumper(%inst_output_pins_net);
 
 # Output to JSON
 open my $fh, '>', 'modules_all.json' or die $!;
