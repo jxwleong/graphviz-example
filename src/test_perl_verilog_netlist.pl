@@ -3,6 +3,7 @@ use Verilog::Getopt;
 use JSON;  # Import the JSON module
 use Tie::IxHash;    # To preserve key order in the hash
 use File::Basename;
+use Data::Dumper; # To print out the hash or array
 
 # Setup options so files can be found
 #my $opt = {
@@ -100,6 +101,8 @@ my $json = JSON->new->pretty->encode(\%ordered_data);
     close $fh;
 =cut
 
+
+# Building the instance mapping of the instantiated instance in the module
 my @modules_array;
 
 foreach my $mod ($nl->modules_sorted_level) {
@@ -115,8 +118,8 @@ foreach my $mod ($nl->modules_sorted_level) {
         print "Module: $mod_name\n";
         print "  Instance: $inst_name ($submod)\n";
 
-        $cell_data{instance} = $inst_name;
-        $cell_data{instance_module} = $submod;
+        $cell_data{"instance"} = $inst_name;
+        $cell_data{"instance_module"} = $submod;
         foreach my $pin ($cell->pins_sorted) {
             my %pin_data;
             
@@ -126,11 +129,9 @@ foreach my $mod ($nl->modules_sorted_level) {
 
             my $port_name = $port->name;
             my $pin_direction = $port->direction;
-            #print "    $pin_name ($pin_direction) => $net_name\n";
 
-            $pin_data{pin_name} = $pin_name;
-            #$pin_data{pin_direction} = $pin_direction;
-            $pin_data{pin_net} = $net_name;
+            $pin_data{"pin"} = $pin_name;
+            $pin_data{"net"} = $net_name;
             while (my ($key, $value) = each %pin_data) {
                 print "$key: $value\n";
             }
@@ -159,6 +160,49 @@ foreach my $mod ($nl->modules_sorted_level) {
 
 }
 
+
+# Mapping out the connections of the pins of each instance
+# First we create a mapping of output pins associated to each instances
+# Then we loop through the @modules_array to map the input and output pins together
+# and create the "connection" hash.
+
+# First step - Mapping the output pin with associated net
+my %inst_output_pins_net;
+
+for my $inst (@modules_array) {
+    for my $output_pin (@{ $inst->{"output"} }) {
+        my $net = $output_pin->{"net"};
+        my $inst_name = $inst->{"instance"};
+        $inst_output_pins_net{$inst_name} = {
+            net => $net,
+            pin => $output_pin->{"pin"},
+            ref => join "" , $inst_name, ".", $net
+        };
+    }
+}
+
+
+# Second step - Create the "connection" between different pins of respective instances
+for my $inst (@modules_array) {
+    for my $input_pin (@{ $inst->{"input"} }) {
+        my $input_net = $input_pin->{"net"};
+        my $inst_name = $inst->{"instance"};
+        
+        # Looping through the output mapping
+        for my $mapped_inst (keys %inst_output_pins_net) {
+            my $output_net = $inst_output_pins_net{$mapped_inst}->{"net"};
+            my $connection_ref = $inst_output_pins_net{$mapped_inst}->{"ref"};
+            if ($input_net eq $output_net) {
+                my %pin_connection;
+                $pin_connection{"connection"} = $connection_ref;
+                my $temp = join "" , $inst_name, ".", $input_net;
+                print "$temp is connected to output $connection_ref\n"
+            }
+        }
+    } 
+}
+
+#print Dumper(%inst_output_pins_net);
 
 # Output to JSON
 open my $fh, '>', 'modules_all.json' or die $!;
