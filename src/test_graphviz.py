@@ -1,67 +1,70 @@
-from graphviz import Digraph
-
-import os
+import graphviz
+import re
 import json
-import sys
 
 
-ROOT_DIR = os.path.normpath(os.path.join(os.path.abspath(__file__), "..", ".."))
-sys.path.insert(0, ROOT_DIR)
+filepath = r"/home/jason/graphviz-example/src/modules_all.json"
 
-DIAGRAM_DIR = os.path.join(ROOT_DIR, "diagrams")
-
-def draw_module_block(module_name, inputs, outputs):
-    dot = Digraph(format='png')
-    dot.attr(rankdir='LR')  # Left-to-right layout
-
-        # Create HTML-like table for better control
-    max_len = max([len(p) for p in inputs + outputs], default=10)
-    center_width = 8 * max_len  # Tune this multiplier as needed
-
-    label = f'''<
-    <TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" BGCOLOR="lightgray">
-        <TR>
-            <TD>
-                <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
-                    {''.join(f"<TR><TD PORT='in{i}'>{inp}</TD></TR>" for i, inp in enumerate(inputs))}
-                </TABLE>
-            </TD>
-            <TD WIDTH="{center_width}"><B>{module_name}</B></TD>
-            <TD>
-                <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
-                    {''.join(f"<TR><TD PORT='out{i}'>{out}</TD></TR>" for i, out in enumerate(outputs))}
-                </TABLE>
-            </TD>
-        </TR>
-    </TABLE>
-    >'''
-
-    dot.node('module', label=label, shape='plaintext')
-
-    return dot
-
-def load_module_info_from_json(json_path):
-    with open(json_path, 'r') as f:
-        data = json.load(f)
-
-    module_name = data.get("module", "UnnamedModule")
-    inputs = data.get("input", [])
-    outputs = data.get("output", [])
-
-    return module_name, inputs, outputs
-
-if __name__ == "__main__":
-    # Path to your JSON file
-    json_file = '/home/jason/graphviz-example/out/cpu.json'
-
-    module_name, inputs, outputs = load_module_info_from_json(json_file)
-    graph = draw_module_block(module_name, inputs, outputs)
-
-    # Output filename (SVG)
-    output_path = os.path.join(DIAGRAM_DIR, f"{module_name}_block")
-    os.makedirs(output_path, exist_ok=True)
+with open(filepath) as f:
+    data = json.load(f)
     
-    diagram_path = os.path.join(output_path, f"{module_name}.png")
-    graph.render(directory=output_path, filename=f"{module_name}", cleanup=True)
+    
+net_sources = {}
+for module in data:
+    instance = module["instance"]
+    for out in module.get("output", []):
+        net = out["net"]
+        pin = out["pin"]
+        if net:
+            net_sources[net] = (instance, pin)
 
-    print(f"Diagram generated: {diagram_path}")
+dot = graphviz.Digraph('G', filename='hardware_graph.gv')
+dot.attr(rankdir='LR')
+
+# Add nodes with size and font size based on number of inputs/outputs
+for module in data:
+    n_inputs = len(module.get("input", []))
+    n_outputs = len(module.get("output", []))
+    min_width = 1.5
+    min_height = 0.7
+    min_fontsize = 12
+    width = min_width + 0.3 * max(n_inputs, n_outputs)
+    height = min_height + 0.2 * (n_inputs + n_outputs)
+    fontsize = min_fontsize + 2 * max(n_inputs, n_outputs)
+    dot.node(
+      module["instance"],
+        label=module["instance"],
+        shape='box',
+        width=str(width),
+        height=str(height),
+        fixedsize='true',
+        fontsize=str(fontsize),
+        fontname='times-bold',
+        style='filled',      
+        fillcolor='#e6f2ff'
+    )
+
+# Add edges with label: "source_instance.source_pin | net_name | target_instance.target_pin"
+for module in data:
+    target_instance = module["instance"]
+    for inp in module.get("input", []):
+        net = inp.get("net")
+        target_pin = inp.get("pin", "")
+        if net and net in net_sources:
+            source_instance, source_pin = net_sources[net]
+            #label = f"{source_instance}.{source_pin} | {net} | {target_instance}.{target_pin}"
+            label = f"{source_instance}.{source_pin} -> {target_instance}.{target_pin}"
+            dot.edge(source_instance, target_instance, label=label)
+        elif "connection" in inp and inp["connection"]:
+            m = re.match(r"(\w+)\.(\w+)", inp["connection"])
+            if m:
+                source_instance, source_pin = m.groups()
+                #label = f"{source_instance}.{source_pin} | {inp.get('net', '')} | {target_instance}.{inp.get('pin', '')}"
+                label = f"{source_instance}.{source_pin} -> {target_instance}.{inp.get('pin', '')}"
+                dot.edge(source_instance, target_instance, label=label)
+            else:
+                dot.edge(inp["connection"], target_instance, label=inp.get("net", ""))
+
+print(dot.source)
+# Render and view (optional)
+dot.render()
