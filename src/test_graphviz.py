@@ -3,7 +3,7 @@ import re
 import json
 import os
 
-filepath = r"/home/jason/graphviz-example/CombinedCUnDP.json"
+filepath = r"/home/jason/graphviz-example/top.json"
 filename = os.path.splitext(os.path.basename(filepath))[0]
 
 with open(filepath) as f:
@@ -23,8 +23,28 @@ dot = graphviz.Digraph('G', filename='hardware_graph.gv')
 dot.attr(rankdir='LR')
 
 with dot.subgraph(name=f'cluster_{filename}') as c:
-    c.attr(label=filename, style='rounded,filled', color='#b7e1cd', fillcolor='#f4f9f4', fontsize='20', fontname='times-bold',margin='100,100')
+    
+    num_nodes = len(data)  # number of modules/nodes in cluster
 
+    # Example heuristic for margin (in inches)
+    base_margin = 0.1  # minimum margin
+    margin_per_node = 20
+    margin_value = base_margin + margin_per_node * num_nodes
+
+    # Example heuristic for font size
+    base_fontsize = 20
+    fontsize_per_node = 2
+    fontsize_value = base_fontsize + fontsize_per_node * num_nodes
+    
+    c.attr(
+        label=filename, 
+        style='rounded,filled', 
+        color='#b7e1cd', 
+        fillcolor='#f4f9f4', 
+        fontsize=str(fontsize_value), 
+        fontname='times-bold',
+        margin=f'{margin_value},{margin_value}' 
+    )
     # Add nodes to the cluster
     for module in data:
         n_inputs = len(module.get("input", []))
