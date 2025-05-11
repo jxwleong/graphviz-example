@@ -107,8 +107,21 @@ with dot.subgraph(name=f'cluster_{filename}') as c:
                     source_instance, source_pin = m.groups()
                     label = f"{source_instance}.{source_pin} -> {target_instance}.{inp.get('pin', '')}"
                     c.edge(source_instance, target_instance, label=label)
-                else:
-                    c.edge(inp["connection"], target_instance, label=inp.get("net", ""))
+                elif net == "":
+                    if source_instance not in constant_nodes:
+                        source_instance = "UNCONNECTED"
+                        c.node(
+                            source_instance,
+                            label="UNCONNECTED",
+                            shape='ellipse',
+                            style='filled',
+                            fillcolor='#ffcccc',  # Light red for unconnected
+                            fontsize='14',
+                            fontcolor='#a94442'   # Optional: dark red text
+                        )
+                        constant_nodes.add(source_instance)
+                    label = f"UNCONNECTED -> {target_instance}.{target_pin}"
+                    c.edge(source_instance, target_instance, label=label)
 
 print(dot.source)
 dot.render()
