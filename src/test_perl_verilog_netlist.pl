@@ -3,13 +3,14 @@ use Verilog::Getopt;
 use JSON;  # Import the JSON module
 use Tie::IxHash;    # To preserve key order in the hash
 use File::Basename;
+use File::Find;
 use Data::Dumper; # To print out the hash or array
 
 # Setup options so files can be found
 #my $opt = {
 #    link_read_nonfatal => 1,  # Set to true to ignore missing modules instead of causing an error
 #    parameter => [
-#        "+incdir+verilog",  # Equivalent to -y verilog
+#        "+incdir+verilog",  # EquivalentC to -y verilog
 #        "-y", "verilog"     # Verilog directory to include
 #    ]
 #};
@@ -20,12 +21,32 @@ use Data::Dumper; # To print out the hash or array
 #    ]
 #};
 
-   my $opt = new Verilog::Getopt;
-   $opt->parameter( "+incdir+/home/jason/graphviz-example/examples/riscv_cpu_example",
-             "-y /home/jason/graphviz-example/examples/riscv_cpu_example",
-             );
+my $rtl_dir = "/home/jason/graphviz-example/examples/riscv_cpu_example";
+# Find all the *.v and *.sv files 
+my @verilog_files = glob("$rtl_dir/*.v $rtl_dir/*.sv");
 
-$Verilog::Netlist::Debug = 1;
+# Skip files matching certain patterns
+@verilog_files = grep {
+    $_ !~ /CHIP\.v$/     # skip testbench.v
+    && $_ !~ /VCPU\.v$/ 
+    && $_ !~ /WIN\.v$/  
+    && $_ !~ /WIN_syn\.v$/  
+
+} @verilog_files;
+
+foreach my $file (@verilog_files) {
+    print "$file\n";
+}
+
+my $opt = new Verilog::Getopt;
+$opt->parameter(
+    "+incdir+$rtl_dir",
+    #"-y/home/jason/graphviz-example/examples/altera-de1-processor/rtl",
+    #"-y/home/jason/graphviz-example/examples/altera-de1-processor/rtl/archieve",
+);
+
+#$Verilog::Netlist::Debug = 1;  # Enables debug output globally
+
 # Prepare netlist
 my $nl = new Verilog::Netlist(
    #include_open_nonfatal => 1,
@@ -34,7 +55,25 @@ my $nl = new Verilog::Netlist(
    options  => $opt
    );
 
+for my $file (@verilog_files) {
+    $nl->read_file(filename => $file);
+}
+
 my $file = '/home/jason/graphviz-example/examples/riscv_cpu_example/CPU.v';
+my $top_module_name;
+open my $fh, '<', $file or die $!;
+while (<$fh>) {
+    if (/^\s*module\s+(\w+)/) {
+        $top_module_name = $1;
+        last;
+    }
+}
+close $fh;
+
+# --- Find the top module object ---
+my $top_mod = $nl->find_module($top_module_name);
+die "Top module '$top_module_name' not found!\n" unless $top_mod;
+
 $nl->read_file(filename => $file);
 my $filename = basename($file);
 my ($name, $ext) = split /\./, $filename;
@@ -45,63 +84,57 @@ $nl->link();
 # $nl->lint();  # Optional, see docs; probably not wanted
 $nl->exit_if_error();
 
-# Create a structure to hold the module information
 
-=comment
-foreach my $mod ($nl->top_modules_sorted) {
-    my $module_name = $mod->name;
+my @modules_array;
+
+foreach my $cell ($top_mod->cells_sorted) {
+    my $inst_name = $cell->name;
+    my $submod    = $cell->submodname;  # The instantiated module type 
+    my $mod_name  = $cell->module->name;
+    print "Module: $mod_name\n";
+    print "  Instance: $inst_name ($submod)\n";
+
+    # Skip auto-generated unnamed instances
+    next if $inst_name =~ /^__unnamed_instance/;
 
     my @inputs;
     my @outputs;
 
-    # https://metacpan.org/pod/Verilog::Netlist::Module#$self-%3Eports_ordered
-    # Different ordering of the ports, this ordering is for same as the verilog file
-    foreach my $sig ($mod->ports_ordered) {
-        my $dir = $sig->direction;
-        my $name = $sig->name;
-        my $data_type = $sig->data_type; # Basically it shows the width if declared
-        $sig->dump;
+    foreach my $pin ($cell->pins_sorted) {
+        my %pin_data;
+        my $pin_name = $pin->name;        # Port name of submodule
+        my $net_name = $pin->netname;     # The signal connected to it
+        my $port     = $pin->port;
 
-        # If it started with [ end with ]
-        # For width
-        # In cases with input or output reg, it will be "reg [7:0]"
-        #if ($data_type =~ /^\[.*\]$/) {
-        #    $name = join '', $name, $data_type;
-        #}
+        my $port_name = $port->name;
+        my $pin_direction = $port->direction;
 
-        if ($dir eq 'in') {
-            push @inputs, $name;
-        } elsif ($dir eq 'out') {
-            push @outputs, $name;
+        $pin_data{"pin"} = $pin_name;
+        $pin_data{"net"} = $net_name;
+        while (my ($key, $value) = each %pin_data) {
+            print "$key: $value\n";
         }
-        # You could also add `elsif ($dir eq 'inout')` if needed
+
+        if ($pin_direction eq 'in') {
+            push @inputs,  \%pin_data;
+        } elsif ($pin_direction eq 'out') {
+            push @outputs, \%pin_data;
+        }
     }
-    my $modules_data =  {
-        module => $module_name,
+
+    # Tie an ordered hash for clean output
+    tie my %ordered_data, 'Tie::IxHash';
+    %ordered_data = (
+        instance => $inst_name,
+        instance_module => $submod,
         input  => \@inputs,
         output => \@outputs
-    };
+    );
 
-    # Tie a hash to preserve order
-    tie my %ordered_data, 'Tie::IxHash';
+    push @modules_array, \%ordered_data;
+}
 
-    %ordered_data = (
-    module => $modules_data->{module},
-    input  => $modules_data->{input},
-    output => $modules_data->{output}
-);
-
-# Convert to JSON without sorting keys alphabetically
-my $json = JSON->new->pretty->encode(\%ordered_data);
-
-# Write JSON with enforced order
-    # Convert the structure to JSON and write it to a file
-    open my $fh, '>', $output_filename or die "Cannot open file for writing: $!";
-    print $fh $json;
-    close $fh;
-=cut
-
-
+=begin comment
 # Building the instance mapping of the instantiated instance in the module
 my @modules_array;
 
@@ -117,6 +150,9 @@ foreach my $mod ($nl->modules_sorted_level) {
         my $mod_name  = $cell->module->name;
         print "Module: $mod_name\n";
         print "  Instance: $inst_name ($submod)\n";
+
+        # Skip auto-generated unnamed instances
+        next if $inst_name =~ /^__unnamed_instance/;
 
         $cell_data{"instance"} = $inst_name;
         $cell_data{"instance_module"} = $submod;
@@ -159,7 +195,7 @@ foreach my $mod ($nl->modules_sorted_level) {
     }
 
 }
-
+=cut
 
 # Mapping out the connections of the pins of each instance
 # First we create a mapping of output pins associated to each instances
