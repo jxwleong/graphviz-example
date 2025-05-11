@@ -21,9 +21,13 @@ use Data::Dumper; # To print out the hash or array
 #    ]
 #};
 
-my $rtl_dir = "/home/jason/graphviz-example/examples/riscv_cpu_example";
-# Find all the *.v and *.sv files 
-my @verilog_files = glob("$rtl_dir/*.v $rtl_dir/*.sv");
+my @rtl_dirs = (
+    "/home/jason/graphviz-example/examples/altera-de1-processor/rtl/",
+    "/home/jason/graphviz-example/examples/altera-de1-processor/rtl/archive",
+    # Add more directories as needed
+);
+
+my @verilog_files = map { glob("$_*.v $_*.sv") } @rtl_dirs;
 
 # Skip files matching certain patterns
 @verilog_files = grep {
@@ -40,7 +44,7 @@ foreach my $file (@verilog_files) {
 
 my $opt = new Verilog::Getopt;
 $opt->parameter(
-    "+incdir+$rtl_dir",
+    #"+incdir+$rtl_dir",
     #"-y/home/jason/graphviz-example/examples/altera-de1-processor/rtl",
     #"-y/home/jason/graphviz-example/examples/altera-de1-processor/rtl/archieve",
 );
@@ -59,7 +63,7 @@ for my $file (@verilog_files) {
     $nl->read_file(filename => $file);
 }
 
-my $file = '/home/jason/graphviz-example/examples/riscv_cpu_example/CPU.v';
+my $file = '/home/jason/graphviz-example/examples/altera-de1-processor/rtl/archive/AlteraDE1_SimpleProcessor.v';
 my $top_module_name;
 open my $fh, '<', $file or die $!;
 while (<$fh>) {
@@ -70,9 +74,7 @@ while (<$fh>) {
 }
 close $fh;
 
-# --- Find the top module object ---
-my $top_mod = $nl->find_module($top_module_name);
-die "Top module '$top_module_name' not found!\n" unless $top_mod;
+
 
 $nl->read_file(filename => $file);
 my $filename = basename($file);
@@ -84,8 +86,22 @@ $nl->link();
 # $nl->lint();  # Optional, see docs; probably not wanted
 $nl->exit_if_error();
 
+# --- Find the top module object ---
+my $top_mod = $nl->find_module($top_module_name);
+die "Top module '$top_module_name' not found!\n" unless $top_mod;
 
 my @modules_array;
+
+my @cells = $top_mod->cells_sorted;
+if (!@cells) {
+    print <<"END_MESSAGE";
+Top module ($file) has no submodule instantiations (standalone).
+This parsing is currently not supported.
+Parsing is skipped.
+END_MESSAGE
+
+    exit;  # Exits the program immediately with status 0 (success)
+}
 
 foreach my $cell ($top_mod->cells_sorted) {
     my $inst_name = $cell->name;
