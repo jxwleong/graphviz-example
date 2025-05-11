@@ -3,7 +3,7 @@ import re
 import json
 
 
-filepath = r"/home/jason/graphviz-example/src/modules_all.json"
+filepath = r"/home/jason/graphviz-example/modules_all.json"
 
 with open(filepath) as f:
     data = json.load(f)
@@ -37,12 +37,18 @@ for module in data:
         shape='box',
         width=str(width),
         height=str(height),
-        fixedsize='true',
+        fixedsize='false',
         fontsize=str(fontsize),
         fontname='times-bold',
         style='filled',      
         fillcolor='#e6f2ff'
     )
+
+constant_nodes = set()
+
+def sanitize_node_name(name):
+    # Replace all non-alphanumeric characters with underscores
+    return re.sub(r'[^A-Za-z0-9_]', '_', name)
 
 # Add edges with label: "source_instance.source_pin | net_name | target_instance.target_pin"
 for module in data:
@@ -50,7 +56,29 @@ for module in data:
     for inp in module.get("input", []):
         net = inp.get("net")
         target_pin = inp.get("pin", "")
-        if net and net in net_sources:
+         # Check if net is a constant (no source)
+        if net and net not in net_sources and not inp.get("connection"):
+            const_node_name = f"CONST_{sanitize_node_name(net)}"
+            if const_node_name not in constant_nodes:
+                dot.node(
+                    const_node_name,
+                    label=net,  # Just the number or value
+                    shape='ellipse',
+                    style='filled',
+                    fillcolor='#fff2cc',
+                    fontsize='14'
+                )
+                constant_nodes.add(const_node_name)
+            pin_name = f'{net} -> {target_instance}.{inp.get("pin")}'  # or whatever your pin name variable is
+            dot.edge(
+                const_node_name,
+                target_instance,
+                label=pin_name
+                #taillabel=pin_name,
+                #labeldistance='2'
+             )
+            
+        elif net and net in net_sources:
             source_instance, source_pin = net_sources[net]
             #label = f"{source_instance}.{source_pin} | {net} | {target_instance}.{target_pin}"
             label = f"{source_instance}.{source_pin} -> {target_instance}.{target_pin}"
