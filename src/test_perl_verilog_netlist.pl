@@ -24,10 +24,14 @@ use Data::Dumper; # To print out the hash or array
 my @rtl_dirs = (
     "/home/jason/graphviz-example/examples/altera-de1-processor/rtl/",
     "/home/jason/graphviz-example/examples/altera-de1-processor/rtl/archive",
+    "/home/jason/graphviz-example/examples/riscv_cpu_example"
     # Add more directories as needed
 );
+my $top_module_file = '/home/jason/graphviz-example/examples/riscv_cpu_example/CPU.v';
 
 my @verilog_files = map { glob("$_*.v $_*.sv") } @rtl_dirs;
+
+
 
 # Skip files matching certain patterns
 @verilog_files = grep {
@@ -44,7 +48,7 @@ foreach my $file (@verilog_files) {
 
 my $opt = new Verilog::Getopt;
 $opt->parameter(
-    #"+incdir+$rtl_dir",
+    "+incdir+$rtl_dirs[2]",
     #"-y/home/jason/graphviz-example/examples/altera-de1-processor/rtl",
     #"-y/home/jason/graphviz-example/examples/altera-de1-processor/rtl/archieve",
 );
@@ -63,9 +67,9 @@ for my $file (@verilog_files) {
     $nl->read_file(filename => $file);
 }
 
-my $file = '/home/jason/graphviz-example/examples/altera-de1-processor/rtl/archive/AlteraDE1_SimpleProcessor.v';
+
 my $top_module_name;
-open my $fh, '<', $file or die $!;
+open my $fh, '<', $top_module_file or die $!;
 while (<$fh>) {
     if (/^\s*module\s+(\w+)/) {
         $top_module_name = $1;
@@ -76,8 +80,8 @@ close $fh;
 
 
 
-$nl->read_file(filename => $file);
-my $filename = basename($file);
+$nl->read_file(filename => $top_module_file);
+my $filename = basename($top_module_file);
 my ($name, $ext) = split /\./, $filename;
 my $output_filename = $name . ".json";
 
@@ -269,6 +273,6 @@ for my $inst (@modules_array) {
 print Dumper(%inst_output_pins_net);
 
 # Output to JSON
-open my $fh, '>', 'modules_all.json' or die $!;
+open my $fh, '>', $output_filename or die $!;
 print $fh to_json(\@modules_array, { pretty => 1 });
 close $fh;
