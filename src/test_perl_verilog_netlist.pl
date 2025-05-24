@@ -1,37 +1,15 @@
 use Verilog::Netlist;
 use Verilog::Getopt;
+use Getopt::Long;
+
 use JSON;  # Import the JSON module
 use Tie::IxHash;    # To preserve key order in the hash
 use File::Basename;
 use File::Find;
 use Data::Dumper; # To print out the hash or array
 
-# Setup options so files can be found
-#my $opt = {
-#    link_read_nonfatal => 1,  # Set to true to ignore missing modules instead of causing an error
-#    parameter => [
-#        "+incdir+verilog",  # EquivalentC to -y verilog
-#        "-y", "verilog"     # Verilog directory to include
-#    ]
-#};
-#my $opt = {
-#    link_read_nonfatal => 1,  # Set to true to ignore missing modules instead of causing an error
-#    parameter => [
-#        "-y", "/home/jason/graphviz-example/examples/riscv_cpu_example"
-#    ]
-#};
 
-my @rtl_dirs = (
-    "/home/jason/graphviz-example/examples/altera-de1-processor/rtl/",
-    "/home/jason/graphviz-example/examples/altera-de1-processor/rtl/archive",
-    "/home/jason/graphviz-example/examples/riscv_cpu_example",
-    "/home/jason/graphviz-example/examples/SimpleCPU/mips/mips-pipeline/verilog"
-    # Add more directories as needed
-);
-my $top_module_file = '/home/jason/graphviz-example/examples/SimpleCPU/mips/mips-pipeline/verilog/top.v';
-
-my @verilog_files = map { glob("$_/*.v $_/*.sv") } @rtl_dirs;
-
+my $top_module_file = '/home/jason/graphviz-example/examples/riscv_cpu_example/CPU.v';
 
 
 # Skip files matching certain patterns
@@ -43,20 +21,34 @@ my @verilog_files = map { glob("$_/*.v $_/*.sv") } @rtl_dirs;
     #&& $_ !~ /riscv_xilinx_2r1w\.v$/  
     #&& $_ !~ /riscv_regfile\.v$/  
 
-
 } @verilog_files;
 
-foreach my $file (@verilog_files) {
-    print "$file\n";
+
+
+my $opt = Verilog::Getopt->new(filename_expansion => 1);
+# Process command-line arguments (e.g., -f file, +incdir, -y, etc.)
+@ARGV = $opt->parameter(@ARGV);
+
+# Show include directories
+print "Include Directories:\n";
+print "  $_\n" for @{$opt->incdir};
+
+# Show module directories
+print "Module Search Paths (-y):\n";
+print "  $_\n" for @{$opt->module_dir};
+
+# Show defined macros
+print "Defines:\n";
+for my $name ($opt->define_names_sorted) {
+    my $val = $opt->defvalue_nowarn($name);
+    print "  $name = ", (defined $val ? $val : '(undef)'), "\n";
 }
 
-my $opt = new Verilog::Getopt;
-$opt->parameter(
-    "+incdir+$rtl_dirs[2]",
-    "+incdir+/home/jason/graphviz-example/examples/SimpleCPU/mips/mips-pipeline",
-    #"-y/home/jason/graphviz-example/examples/altera-de1-processor/rtl",
-    #"-y/home/jason/graphviz-example/examples/altera-de1-processor/rtl/archieve",
-);
+# Example test: try to resolve "CPU.v"
+my $resolved = $opt->file_path("CPU.v", "module");
+print "\nResolved 'CPU.v' to: $resolved\n" if defined $resolved;
+
+
 
 #$Verilog::Netlist::Debug = 1;  # Enables debug output globally
 
@@ -67,10 +59,6 @@ my $nl = new Verilog::Netlist(
    keep_comments         => 1,
    options  => $opt
    );
-
-for my $file (@verilog_files) {
-    $nl->read_file(filename => $file);
-}
 
 
 my $top_module_name;

@@ -1,0 +1,1 @@
+perl test_perl_verilog_netlist.pl  -f /home/jason/graphviz-example/examples/riscv_cpu_example/riscv.vc +define+FOO=bar

@@ -1,0 +1,7 @@
+-y /home/jason/graphviz-example/examples/altera-de1-processor/rtl/
+-y /home/jason/graphviz-example/examples/altera-de1-processor/rtl/archive
+-y /home/jason/graphviz-example/examples/riscv_cpu_example
+-y /home/jason/graphviz-example/examples/SimpleCPU/mips/mips-pipeline/verilog
+
++incdir+/home/jason/graphviz-example/examples/riscv_cpu_example
++incdir+/home/jason/graphviz-example/examples/SimpleCPU/mips/mips-pipeline
