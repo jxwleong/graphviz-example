@@ -3,7 +3,13 @@ import re
 import json
 import os
 
-filepath = r"/home/jason/graphviz-example/top.json"
+
+current_file_path = os.path.abspath(__file__)
+current_file_dir = os.path.dirname(__file__)
+root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+
+
+filepath = os.path.abspath(os.path.join(root_dir, "top.json"))
 filename = os.path.splitext(os.path.basename(filepath))[0]
 
 with open(filepath) as f:
@@ -51,6 +57,7 @@ with dot.subgraph(name=f'cluster_{filename}') as c:
         n_outputs = len(module.get("output", []))
         min_width = 1.5
         min_height = 0.7
+
         min_fontsize = 12
         width = min_width + 0.3 * max(n_inputs, n_outputs)
         height = min_height + 0.2 * (n_inputs + n_outputs)

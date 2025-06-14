@@ -7,9 +7,18 @@ use Tie::IxHash;    # To preserve key order in the hash
 use File::Basename;
 use File::Find;
 use Data::Dumper; # To print out the hash or array
+use Cwd;
 
 
-my $top_module_file = '/home/jason/graphviz-example/examples/riscv_cpu_example/CPU.v';
+my $this_file_full_path = Cwd::abs_path(__FILE__);
+my $this_file_parent_dir = dirname($this_file_full_path);
+my $root_dir =  dirname($this_file_parent_dir);
+my $example_dir_full_path = File::Spec->catfile($root_dir, "examples");
+
+
+my $top_module_file = File::Spec->catfile($example_dir_full_path, "riscv_cpu_example", "CPU.v");
+
+print "TOP module file: $top_module_file\n";
 
 
 # Skip files matching certain patterns
