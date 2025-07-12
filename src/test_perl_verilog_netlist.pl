@@ -16,11 +16,6 @@ my $root_dir =  dirname($this_file_parent_dir);
 my $example_dir_full_path = File::Spec->catfile($root_dir, "examples");
 
 
-my $top_module_file = File::Spec->catfile($example_dir_full_path, "riscv_cpu_example", "CPU.v");
-
-print "TOP module file: $top_module_file\n";
-
-
 # Skip files matching certain patterns
 @verilog_files = grep {
     $_ !~ /CHIP\.v$/     # skip testbench.v
@@ -53,9 +48,22 @@ for my $name ($opt->define_names_sorted) {
     print "  $name = ", (defined $val ? $val : '(undef)'), "\n";
 }
 
+
+# Need to move here otherwise the verilog argument will be eaten and wont work
 # Example test: try to resolve "CPU.v"
 my $resolved = $opt->file_path("CPU.v", "module");
 print "\nResolved 'CPU.v' to: $resolved\n" if defined $resolved;
+
+
+# Need to move down here otherwise it wont 
+my $user_specified_file;
+my $top_module_file;
+
+GetOptions("top=s" => \$user_specified_file);
+$top_module_file = $user_specified_file; 
+#|| File::Spec->catfile($example_dir_full_path, "riscv_cpu_example", "CPU.v");
+#$top_module_file = File::Spec->catfile($example_dir_full_path, "riscv_cpu_example", "CPU.v");
+print "TOP module file: $top_module_file\n";
 
 
 
