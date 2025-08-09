@@ -2,20 +2,29 @@ import graphviz
 import re
 import json
 import os
+import argparse
 
+# -----------------------------
+# Argument parsing
+# -----------------------------
+parser = argparse.ArgumentParser(description="Generate hardware graph from JSON file.")
+parser.add_argument(
+    "--input_file",
+    required=True,
+    help="Full path to the JSON file containing hardware data."
+)
+args = parser.parse_args()
 
-current_file_path = os.path.abspath(__file__)
-current_file_dir = os.path.dirname(__file__)
-root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-
-
-filepath = os.path.abspath(os.path.join(root_dir, "top.json"))
+filepath = os.path.abspath(args.input_file)
 filename = os.path.splitext(os.path.basename(filepath))[0]
 
+# -----------------------------
+# Load JSON data
+# -----------------------------
 with open(filepath) as f:
     data = json.load(f)
-    
-    
+
+# Map each net to its source
 net_sources = {}
 for module in data:
     instance = module["instance"]
@@ -25,43 +34,44 @@ for module in data:
         if net:
             net_sources[net] = (instance, pin)
 
+# -----------------------------
+# Create Graphviz Digraph
+# -----------------------------
 dot = graphviz.Digraph('G', filename='hardware_graph.gv')
 dot.attr(rankdir='LR')
 
 with dot.subgraph(name=f'cluster_{filename}') as c:
-    
-    num_nodes = len(data)  # number of modules/nodes in cluster
-
-    # Example heuristic for margin (in inches)
-    base_margin = 0.1  # minimum margin
+    num_nodes = len(data)
+    base_margin = 0.1
     margin_per_node = 20
     margin_value = base_margin + margin_per_node * num_nodes
 
-    # Example heuristic for font size
     base_fontsize = 20
     fontsize_per_node = 2
     fontsize_value = base_fontsize + fontsize_per_node * num_nodes
-    
+
     c.attr(
-        label=filename, 
-        style='rounded,filled', 
-        color='#b7e1cd', 
-        fillcolor='#f4f9f4', 
-        fontsize=str(fontsize_value), 
+        label=filename,
+        style='rounded,filled',
+        color='#b7e1cd',
+        fillcolor='#f4f9f4',
+        fontsize=str(fontsize_value),
         fontname='times-bold',
-        margin=f'{margin_value},{margin_value}' 
+        margin=f'{margin_value},{margin_value}'
     )
-    # Add nodes to the cluster
+
+    # Add nodes
     for module in data:
         n_inputs = len(module.get("input", []))
         n_outputs = len(module.get("output", []))
         min_width = 1.5
         min_height = 0.7
-
         min_fontsize = 12
+
         width = min_width + 0.3 * max(n_inputs, n_outputs)
         height = min_height + 0.2 * (n_inputs + n_outputs)
         fontsize = min_fontsize + 2 * max(n_inputs, n_outputs)
+
         c.node(
             module["instance"],
             label=module["instance"],
@@ -71,7 +81,7 @@ with dot.subgraph(name=f'cluster_{filename}') as c:
             fixedsize='false',
             fontsize=str(fontsize),
             fontname='times-bold',
-            style='filled',      
+            style='filled',
             fillcolor='#e6f2ff'
         )
 
@@ -80,7 +90,7 @@ with dot.subgraph(name=f'cluster_{filename}') as c:
     def sanitize_node_name(name):
         return re.sub(r'[^A-Za-z0-9_]', '_', name)
 
-    # Add edges (inside the cluster)
+    # Add edges
     for module in data:
         target_instance = module["instance"]
         for inp in module.get("input", []):
@@ -122,13 +132,21 @@ with dot.subgraph(name=f'cluster_{filename}') as c:
                             label="UNCONNECTED",
                             shape='ellipse',
                             style='filled',
-                            fillcolor='#ffcccc',  # Light red for unconnected
+                            fillcolor='#ffcccc',
                             fontsize='14',
-                            fontcolor='#a94442'   # Optional: dark red text
+                            fontcolor='#a94442'
                         )
                         constant_nodes.add(source_instance)
                     label = f"UNCONNECTED -> {target_instance}.{target_pin}"
                     c.edge(source_instance, target_instance, label=label)
 
+# -----------------------------
+# Output
+# -----------------------------
+output_base = os.path.join(os.path.dirname(filepath), f"{filename}_hardware_graph")
+output_path = dot.render(output_base, format="pdf")  # or "png" if you prefer
+
 print(dot.source)
 dot.render()
+
+print(f"Output file: {output_path}")
