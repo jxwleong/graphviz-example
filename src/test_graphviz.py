@@ -13,11 +13,17 @@ parser.add_argument(
     required=True,
     help="Full path to the JSON file containing hardware data."
 )
+parser.add_argument(
+    "--output_file",
+    default="hardware_graph.gv",
+    help="Output file name of the diagram."
+)
+
 args = parser.parse_args()
 
 filepath = os.path.abspath(args.input_file)
 filename = os.path.splitext(os.path.basename(filepath))[0]
-
+output_filename = args.output_file
 # -----------------------------
 # Load JSON data
 # -----------------------------
@@ -37,7 +43,7 @@ for module in data:
 # -----------------------------
 # Create Graphviz Digraph
 # -----------------------------
-dot = graphviz.Digraph('G', filename='hardware_graph.gv')
+dot = graphviz.Digraph('G', filename=output_filename)
 dot.attr(rankdir='LR')
 
 with dot.subgraph(name=f'cluster_{filename}') as c:
@@ -143,7 +149,7 @@ with dot.subgraph(name=f'cluster_{filename}') as c:
 # -----------------------------
 # Output
 # -----------------------------
-output_base = os.path.join(os.path.dirname(filepath), f"{filename}_hardware_graph")
+output_base = os.path.join(os.path.dirname(filepath), f"{output_filename}_hardware_graph")
 output_path = dot.render(output_base, format="pdf")  # or "png" if you prefer
 
 print(dot.source)
